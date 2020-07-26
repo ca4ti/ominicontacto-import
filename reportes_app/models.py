@@ -64,12 +64,12 @@ class LlamadaLogManager(models.Manager):
             fecha_desde = datetime_hora_minima_dia(fecha_desde)
             fecha_hasta = datetime_hora_maxima_dia(fecha_hasta)
 
-        result = LlamadaLog.objects.values_list('agente_id') \
-                                   .annotate(sum=Sum('duracion_llamada')) \
-                                   .filter(time__gte=fecha_desde, time__lte=fecha_hasta) \
-                                   .filter(event__in=eventos) \
-                                   .filter(agente_id__in=agentes) \
-                                   .order_by('agente_id')
+        result = self.values_list('agente_id') \
+                     .annotate(sum=Sum('duracion_llamada')) \
+                     .filter(time__gte=fecha_desde, time__lte=fecha_hasta) \
+                     .filter(event__in=eventos) \
+                     .filter(agente_id__in=agentes) \
+                     .order_by('agente_id')
 
         return result
 
@@ -78,12 +78,12 @@ class LlamadaLogManager(models.Manager):
             fecha_desde = datetime_hora_minima_dia(fecha_desde)
             fecha_hasta = datetime_hora_maxima_dia(fecha_hasta)
 
-        result = LlamadaLog.objects.values_list('agente_id') \
-                                   .annotate(count=Count('*')) \
-                                   .filter(time__gte=fecha_desde, time__lte=fecha_hasta) \
-                                   .filter(event__in=eventos) \
-                                   .filter(agente_id__in=agentes) \
-                                   .order_by('agente_id')
+        result = self.values_list('agente_id') \
+                     .annotate(count=Count('*')) \
+                     .filter(time__gte=fecha_desde, time__lte=fecha_hasta) \
+                     .filter(event__in=eventos) \
+                     .filter(agente_id__in=agentes) \
+                     .order_by('agente_id')
 
         return result
 
@@ -267,11 +267,11 @@ class ActividadAgenteLogManager(models.Manager):
             fecha_desde = datetime_hora_minima_dia(fecha_desde)
             fecha_hasta = datetime_hora_maxima_dia(fecha_hasta)
 
-        result = ActividadAgenteLog.objects.values_list('agente_id', 'time', 'event', 'pausa_id') \
-                                           .filter(time__gte=fecha_desde, time__lte=fecha_hasta) \
-                                           .filter(event__in=eventos) \
-                                           .filter(agente_id__in=agentes) \
-                                           .order_by('agente_id', '-time')
+        result = self.values_list('agente_id', 'time', 'event', 'pausa_id') \
+                     .filter(time__gte=fecha_desde, time__lte=fecha_hasta) \
+                     .filter(event__in=eventos) \
+                     .filter(agente_id__in=agentes) \
+                     .order_by('agente_id', '-time')
 
         return result
 

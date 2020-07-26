@@ -18,7 +18,6 @@
 #
 
 from __future__ import unicode_literals
-from datetime import time
 
 from django.db import models, connection
 from django.db.models import Count, Sum, Q

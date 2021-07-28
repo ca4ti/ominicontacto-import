@@ -279,6 +279,8 @@ class ReporteDeLLamadasDialerDeSupervision(ReporteDeLlamadasDeSupervision):
                 campanas_por_id_wombat[campana.campaign_id_wombat] = campana
         campana_service = CampanaService()
         dato_campanas = campana_service.obtener_datos_campanas_run(campanas_por_id_wombat)
+        if dato_campanas is None:
+            return
         for campana_id, datos_campana in dato_campanas.items():
             if campana_id not in self.estadisticas:
                 self._inicializar_conteo_de_campana(campana_id)

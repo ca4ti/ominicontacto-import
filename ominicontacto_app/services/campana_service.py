@@ -445,7 +445,7 @@ class CampanaService():
         service_wombat = WombatService()
         url_edit = "api/live/runs/"
         salida = service_wombat.list_config_wombat(url_edit)
-        if salida:
+        if salida and salida['status'] == 'OK':
             return self.obtener_datos_campanas_json_de_wombat(salida, campanas_por_id_wombat)
         else:
             return None

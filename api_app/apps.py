@@ -119,6 +119,14 @@ class ApiAppConfig(AppConfig):
              'roles': ['Administrador', 'Gerente', 'Supervisor']},
             {'nombre': 'api_dashboard_supervision',
              'roles': ['Administrador', 'Gerente', 'Supervisor']},
+            {'nombre': 'api_agents_campaign',
+             'roles': ['Administrador', 'Gerente', 'Supervisor']},
+            {'nombre': 'api_update_agents_campaign',
+             'roles': ['Administrador', 'Gerente', 'Supervisor']},
+            {'nombre': 'api_active_agents',
+             'roles': ['Administrador', 'Gerente', 'Supervisor']},
+            {'nombre': 'api_active_agents_by_group',
+             'roles': ['Administrador', 'Gerente', 'Supervisor']},
         ]
 
     informacion_de_permisos = {
@@ -238,5 +246,17 @@ class ApiAppConfig(AppConfig):
              'version': '1.17.0'},
         'api_dashboard_supervision':
             {'descripcion': _('Dashboard de supervision'),
-             'version': '1.18.0'}
+             'version': '1.18.0'},
+        'api_agents_campaign':
+            {'descripcion': _('Lista de agentes por campaña'),
+             'version': '1.19.0'},
+        'api_update_agents_campaign':
+            {'descripcion': _('Actualiza los agentes de una campaña'),
+             'version': '1.19.0'},
+        'api_active_agents':
+            {'descripcion': _('Obtiene todos los agentes activos'),
+             'version': '1.19.0'},
+        'api_active_agents_by_group':
+            {'descripcion': _('Obtiene todos los agentes activos por grupo'),
+             'version': '1.19.0'}
     }

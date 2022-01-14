@@ -10,7 +10,12 @@ const routes = [
         path: '/index.html',
         name: 'dashboard',
         component: () => import("@/views/DashboardSupervision.vue"),
-    }, 
+    },
+    {
+        path: '/add_agents_to_campaign',
+        name: 'add_agents_to_campaign',
+        component: () => import("@/views/AddAgentsToCampaign.vue"),
+    },
 ]
 
 const router = createRouter({

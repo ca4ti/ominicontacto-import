@@ -1,17 +1,30 @@
 import { createApp } from 'vue'
+import VueSweetalert2 from 'vue-sweetalert2'
+import store from './store'
 import App from './App.vue'
 import router from './router'
 
 // Primevue
 import PrimeVue from 'primevue/config'
 import 'primeflex/primeflex.css'
-import 'primevue/resources/themes/saga-blue/theme.css'       //theme
+import 'primevue/resources/themes/saga-green/theme.css'       //theme
 import 'primevue/resources/primevue.min.css'                 //core css
 import 'primeicons/primeicons.css'                           //icons
 
+// Sweetalert Vue
+import 'sweetalert2/dist/sweetalert2.min.css'
+
 // Components primevue
-import Card from 'primevue/card';
-import Button from 'primevue/button';
+import Card from 'primevue/card'
+import Button from 'primevue/button'
+import InputText from 'primevue/inputtext'
+import DataTable from 'primevue/datatable'
+import Column from 'primevue/column'
+import ColumnGroup from 'primevue/columngroup'
+import MultiSelect from 'primevue/multiselect'
+import Message from 'primevue/message'
+import Tooltip from 'primevue/tooltip'
+import Dropdown from 'primevue/dropdown'
 
 // Idiomas
 import { createI18n } from 'vue-i18n'
@@ -38,10 +51,20 @@ const i18n = createI18n({
 
 const app = createApp(App)
 
+app.directive('tooltip', Tooltip)
 app.component('Card', Card)
 app.component('Button', Button)
+app.component('InputText', InputText)
+app.component('DataTable', DataTable)
+app.component('Column', Column)
+app.component('ColumnGroup', ColumnGroup)
+app.component('MultiSelect', MultiSelect)
+app.component('Message', Message)
+app.component('Dropdown', Dropdown)
 
 app.use(i18n)
+    .use(store)
     .use(router)
+    .use(VueSweetalert2)
     .use(PrimeVue)
     .mount('#app')

@@ -12,7 +12,7 @@ const routes = [
         component: () => import("@/views/DashboardSupervision.vue"),
     },
     {
-        path: '/add_agents_to_campaign',
+        path: '/add_agents_to_campaign/:campaign_id',
         name: 'add_agents_to_campaign',
         component: () => import("@/views/AddAgentsToCampaign.vue"),
     },

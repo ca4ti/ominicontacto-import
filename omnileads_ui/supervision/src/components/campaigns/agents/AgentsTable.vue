@@ -28,7 +28,7 @@
             <Column field="agent_full_name" header="Nombre"></Column>
             <Column field="agent_username" header="Username"></Column>
             <Column field="agent_sip_id" header="Sip ID" :sortable="true"></Column>
-            <Column field="agent_penalty" header="Penalty">
+            <Column field="agent_penalty" header="Penalty" :sortable="true">
                 <template #editor="{ data, field }">
                     <Dropdown v-model="data[field]" :options="penalties" optionLabel="label" optionValue="value" placeholder="Selecciona penalty">
                         <template #option="slotProps">

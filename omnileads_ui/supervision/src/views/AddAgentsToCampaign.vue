@@ -21,15 +21,6 @@
                         <Button type="button" label="Guardar" icon="pi pi-save" v-tooltip.left="'Se actualizarán los agentes de la campaña'" class="p-button" @click="updateAgentsCampaign(2)"/>
                     </div>
                 </div>
-                <Accordion>
-                    <AccordionTab>
-                        <template #header>
-                            <i class="pi pi-calendar"></i>
-                            <span>Header I</span>
-                        </template>
-                        Content
-                    </AccordionTab>
-                </Accordion>
                 <AgentsTable />
             </div>
         </div>
@@ -49,7 +40,7 @@ export default {
         AddAgents,
     },
     created() {
-        this.initAgentsCampaign(2)
+        this.initAgentsCampaign(this.$route.params.campaign_id)
         this.initActiveAgents()
         this.initGroups()
     },

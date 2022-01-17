@@ -6,56 +6,61 @@ export default createStore({
   state: {
     agents_by_campaign: [],
     active_agents: [],
+    campaign: {},
     groups: []
   },
   mutations: {
-    addAgentToCampaign (state, new_agent) {
+    addAgentToCampaign(state, new_agent) {
       state.agents_by_campaign.push(new_agent)
     },
-    initAgentsCampaign(state, agents){
+    initAgentsCampaign(state, agents) {
       state.agents_by_campaign = agents
     },
-    initActiveAgents(state, active_agents){
+    initCampaign(state, campaign) {
+      state.campaign = campaign
+    },
+    initActiveAgents(state, active_agents) {
       state.active_agents = active_agents
     },
-    initGroups(state, groups){
+    initGroups(state, groups) {
       state.groups = groups
     },
-    removeAgentOfCampaign(state, agent_id){
+    removeAgentOfCampaign(state, agent_id) {
       state.agents_by_campaign = state.agents_by_campaign.filter(e => e['agent_id'] != agent_id)
     },
-    updateAgentsCampaign(state){
+    updateAgentsCampaign(state) {
       console.log(state.agents_by_campaign)
     },
-    updateAgentPenalty(state, payload){
+    updateAgentPenalty(state, payload) {
       state.agents_by_campaign.filter((agent) => {
-        if(agent['agent_id'] == payload['agent_id']){
+        if (agent['agent_id'] == payload['agent_id']) {
           agent['agent_penalty'] = payload['penalty']
         }
       })
     },
   },
   actions: {
-    addAgentToCampaign ({ commit }, new_agent) {
+    addAgentToCampaign({ commit }, new_agent) {
       commit('addAgentToCampaign', new_agent)
     },
-    removeAgentOfCampaign ({ commit }, agent_id) {
+    removeAgentOfCampaign({ commit }, agent_id) {
       commit('removeAgentOfCampaign', agent_id)
     },
-    async initAgentsCampaign ({ commit }, campaign_id) {
-      const {agents_campaign} = await agentsCampaignService.getAgentsByCampaign(campaign_id)
+    async initAgentsCampaign({ commit }, campaign_id) {
+      const { agents_campaign, campaign } = await agentsCampaignService.getAgentsByCampaign(campaign_id)
+      commit('initCampaign', campaign)
       commit('initAgentsCampaign', agents_campaign)
     },
-    async initActiveAgents ({ commit }) {
-      const {active_agents} = await agentsCampaignService.getActiveAgents()
+    async initActiveAgents({ commit }) {
+      const { active_agents } = await agentsCampaignService.getActiveAgents()
       commit('initActiveAgents', active_agents)
     },
-    async initGroups ({ commit }) {
-      const {groups} = await agentsCampaignService.getActiveAgentsByGroup()
+    async initGroups({ commit }) {
+      const { groups } = await agentsCampaignService.getActiveAgentsByGroup()
       commit('initGroups', groups)
     },
-    async updateAgentsCampaign({ commit }, campaign_id){
-      let agents = this.state.agents_by_campaign.map((agent)=>{
+    async updateAgentsCampaign({ commit }, campaign_id) {
+      let agents = this.state.agents_by_campaign.map((agent) => {
         return {
           agent_id: agent['agent_id'],
           agent_penalty: agent['agent_penalty']
@@ -66,10 +71,10 @@ export default createStore({
         agents
       })
       console.log(update_resp)
-      const {agents_campaign} = await agentsCampaignService.getAgentsByCampaign(campaign_id)
+      const { agents_campaign } = await agentsCampaignService.getAgentsByCampaign(campaign_id)
       commit('initAgentsCampaign', agents_campaign)
     },
-    updateAgentPenalty ({ commit }, payload) {
+    updateAgentPenalty({ commit }, payload) {
       commit('updateAgentPenalty', payload)
     },
   },

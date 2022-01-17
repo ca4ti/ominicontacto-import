@@ -9,7 +9,7 @@ const HTTP = {
 }
 
 export default class AgentsCampaignService {
-    constructor(){
+    constructor() {
         this.cookies = new Cookies()
         this.headers = {
             'X-CSRFToken': this.cookies.get('csrftoken'),
@@ -18,14 +18,14 @@ export default class AgentsCampaignService {
         this.initPayload()
     }
 
-    setPayload(method=HTTP.POST, body=null){
-        if(body){
+    setPayload(method = HTTP.POST, body = null) {
+        if (body) {
             this.payload.body = body
         }
         this.payload.method = method
     }
 
-    initPayload(){
+    initPayload() {
         this.payload = {
             method: HTTP.GET,
             credentials: 'same-origin',
@@ -33,40 +33,40 @@ export default class AgentsCampaignService {
         }
     }
 
-    async getAgentsByCampaign(id_campaign){
+    async getAgentsByCampaign(id_campaign) {
         try {
             let resp = await fetch(apiUrls.CampaignAgents(id_campaign), this.payload)
             let agents = await resp.json()
             return agents
         } catch (error) {
-            console.error("No se pudo hacer la peticion al API")
+            console.error("No se pudieron obtener los agentes por campaña")
             return []
         }
     }
 
-    async getActiveAgents(){
+    async getActiveAgents() {
         try {
             let resp = await fetch(apiUrls.ActiveAgents, this.payload)
             let agents = await resp.json()
             return agents
         } catch (error) {
-            console.error("No se pudo hacer la peticion al API")
+            console.error("No se pudieron obtener los agentes activos")
             return []
         }
     }
 
-    async getActiveAgentsByGroup(){
+    async getActiveAgentsByGroup() {
         try {
             let resp = await fetch(apiUrls.ActiveAgentsByGroup, this.payload)
             let agents = await resp.json()
             return agents
         } catch (error) {
-            console.error("No se pudo hacer la peticion al API")
+            console.error("No se pudieron obtener los agentes activos por grupo")
             return []
         }
     }
 
-    async updateAgentsByCampaign(data){
+    async updateAgentsByCampaign(data) {
         try {
             // const formData = new FormData();
             // formData.append('campaign_id', data['campaign_id'])
@@ -83,7 +83,7 @@ export default class AgentsCampaignService {
             // return await resp.json()
             return {}
         } catch (error) {
-            console.error("No se pudo hacer la peticion al API")
+            console.error("No se pudieron actualizar los agentes de la campaña")
             console.error(error)
             return []
         }

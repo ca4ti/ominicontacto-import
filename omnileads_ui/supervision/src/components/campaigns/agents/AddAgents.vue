@@ -5,15 +5,15 @@
         v-model="selectedAgent"
         :options="agents"
         optionLabel="agent"
-        placeholder="Selecciona un agente"
+        :placeholder="$tc('select_a',1,{field: 'agente'})"
         :filter="true"
-        filterPlaceholder="Busca"
+        v-bind:filterPlaceholder="$t('find_by', {field: 'nombre'})"
       />
     </div>
     <div class="p-field p-col-12 p-md-3">
       <Button
         type="button"
-        label="Agregar"
+        v-bind:label="$t('actions.add')"
         class="p-button-outlined"
         @click="addAgent"
       />
@@ -44,7 +44,7 @@ export default {
           this.agents_by_campaign.find((agent) => agent_id == agent["agent_id"])
         ) {
           this.$swal({
-            title: "¡Operacion erronea!",
+            title: this.$t('sweet_alert.title.warning'),
             text: "El agente ya está en la campaña",
             icon: "warning",
             timer: 2000,
@@ -57,7 +57,7 @@ export default {
           this.addAgentToCampaign(agent);
           this.selectedAgent = null;
           this.$swal({
-            title: "¡Operacion exitosa!",
+            title: this.$t('sweet_alert.title.success'),
             text: "Se agrego el agente exitosamente",
             icon: "success",
             timer: 2000,
@@ -66,7 +66,7 @@ export default {
         }
       } else {
         this.$swal({
-          title: "¡Operacion erronea!",
+          title: this.$t('sweet_alert.title.warning'),
           text: "No seleccionaste un agente",
           icon: "warning",
           timer: 2000,

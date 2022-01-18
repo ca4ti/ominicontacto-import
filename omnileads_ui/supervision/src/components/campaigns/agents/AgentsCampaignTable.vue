@@ -28,7 +28,7 @@
           <Button
             type="button"
             icon="pi pi-filter-slash"
-            label="Limpiar filtros"
+            :label="$t('clean_object',{object: 'filtros'})"
             class="p-button-outlined"
             @click="clearFilter()"
           />
@@ -37,17 +37,17 @@
             <InputText
               v-model="filters['global'].value"
               icon="pi pi-check"
-              placeholder="Busca por nombre..."
+              :placeholder="$t('find_by', {field: 'nombre'})"
             />
           </span>
         </div>
       </template>
       <template #empty> No se encontraron agentes. </template>
       <template #loading> Cargando la información. Espere por favor. </template>
-      <Column field="agent_full_name" header="Nombre"></Column>
-      <Column field="agent_username" header="Username"></Column>
-      <Column field="agent_sip_id" header="Sip ID" :sortable="true"></Column>
-      <Column field="agent_penalty" header="Penalty" :sortable="true">
+      <Column field="agent_full_name" :header="$t('agent_campaign.name')"></Column>
+      <Column field="agent_username" :header="$t('agent_campaign.username')"></Column>
+      <Column field="agent_sip_id" :header="$t('agent_campaign.sip')" :sortable="true"></Column>
+      <Column field="agent_penalty" :header="$t('agent_campaign.penalty')" :sortable="true">
         <template #editor="{ data, field }">
           <Dropdown
             v-model="data[field]"
@@ -115,7 +115,7 @@ export default {
     removeAgent(agent_id) {
       this.removeAgentOfCampaign(agent_id);
       this.$swal({
-        title: "¡Operacion exitosa!",
+        title: this.$t('sweet_alert.title.success'),
         text: "Se elimino el agente exitosamente",
         icon: "success",
         timer: 2000,

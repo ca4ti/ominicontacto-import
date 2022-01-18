@@ -5,15 +5,15 @@
         v-model="selectedGroup"
         :options="groupsSelectize"
         optionLabel="group"
-        placeholder="Selecciona un grupo"
+        :placeholder="$tc('select_a',1,{field: 'grupo'})"
         :filter="true"
-        filterPlaceholder="Busca"
+        v-bind:filterPlaceholder="$t('find_by', {field: 'nombre'})"
       />
     </div>
     <div class="p-field p-col-12 p-md-3">
       <Button
         type="button"
-        label="Agregar"
+        v-bind:label="$t('actions.add')"
         class="p-button-outlined"
         @click="addGroup"
       />
@@ -58,7 +58,7 @@ export default {
         this.selectedGroup = null;
         if (existing_agents.length > 0) {
           this.$swal({
-            title: "¡Advertencia!",
+            title: this.$t('sweet_alert.title.warning'),
             text: `Los siguientes agentes ya estaban en la campaña:
                   ( ${existing_agents.join(" - ")} ), por lo tanto
                   no se agregaron`,
@@ -68,7 +68,7 @@ export default {
           });
         } else {
           this.$swal({
-            title: "¡Operacion exitosa!",
+            title: this.$t('sweet_alert.title.success'),
             text: "Se agrego el grupo exitosamente",
             icon: "success",
             timer: 4000,
@@ -77,7 +77,7 @@ export default {
         }
       } else {
         this.$swal({
-          title: "¡Operacion erronea!",
+          title: this.$t('sweet_alert.title.warning'),
           text: "No seleccionaste el grupo",
           icon: "warning",
           timer: 2000,

@@ -59,21 +59,6 @@ export default createStore({
       const { groups } = await agentsCampaignService.getActiveAgentsByGroup()
       commit('initGroups', groups)
     },
-    async updateAgentsCampaign({ commit }, campaign_id) {
-      let agents = this.state.agents_by_campaign.map((agent) => {
-        return {
-          agent_id: agent['agent_id'],
-          agent_penalty: agent['agent_penalty']
-        }
-      })
-      let update_resp = await agentsCampaignService.updateAgentsByCampaign({
-        campaign_id,
-        agents
-      })
-      console.log(update_resp)
-      const { agents_campaign } = await agentsCampaignService.getAgentsByCampaign(campaign_id)
-      commit('initAgentsCampaign', agents_campaign)
-    },
     updateAgentPenalty({ commit }, payload) {
       commit('updateAgentPenalty', payload)
     },

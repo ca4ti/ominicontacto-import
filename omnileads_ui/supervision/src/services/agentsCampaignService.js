@@ -1,43 +1,16 @@
-import Cookies from 'universal-cookie'
 import apiUrls from './../const/api-urls'
+import { HTTP, BaseService } from './apiBaseService'
 
-const HTTP = {
-    'POST': 'POST',
-    'GET': 'GET',
-    'PUT': 'PUT',
-    'DELETE': "DELETE"
-}
-
-export default class AgentsCampaignService {
+export default class AgentsCampaignService extends BaseService {
     constructor() {
-        this.cookies = new Cookies()
-        this.headers = {
-            'X-CSRFToken': this.cookies.get('csrftoken'),
-            'Content-Type': 'application/json'
-        }
-        this.initPayload()
-    }
-
-    setPayload(method = HTTP.POST, body = null) {
-        if (body) {
-            this.payload.body = body
-        }
-        this.payload.method = method
-    }
-
-    initPayload() {
-        this.payload = {
-            method: HTTP.GET,
-            credentials: 'same-origin',
-            headers: this.headers
-        }
+        super()
     }
 
     async getAgentsByCampaign(id_campaign) {
         try {
             let resp = await fetch(apiUrls.CampaignAgents(id_campaign), this.payload)
-            let agents = await resp.json()
-            return agents
+            let agents_by_campaign = await resp.json()
+            return agents_by_campaign
         } catch (error) {
             console.error("No se pudieron obtener los agentes por campaña")
             return []
@@ -58,8 +31,8 @@ export default class AgentsCampaignService {
     async getActiveAgentsByGroup() {
         try {
             let resp = await fetch(apiUrls.ActiveAgentsByGroup, this.payload)
-            let agents = await resp.json()
-            return agents
+            let agents_by_group = await resp.json()
+            return agents_by_group
         } catch (error) {
             console.error("No se pudieron obtener los agentes activos por grupo")
             return []
@@ -68,24 +41,17 @@ export default class AgentsCampaignService {
 
     async updateAgentsByCampaign(data) {
         try {
-            // const formData = new FormData();
-            // formData.append('campaign_id', data['campaign_id'])
-            // formData.append('agents', data['agents'])
-            // this.setPayload(HTTP.POST, formData)
             this.setPayload(HTTP.POST, JSON.stringify(data))
-            console.log(this.payload)
             const resp = await fetch(
                 apiUrls.UpdateAgentsCampaign,
                 this.payload
             )
-            console.log(resp)
             this.initPayload()
-            // return await resp.json()
-            return {}
+            return resp
         } catch (error) {
             console.error("No se pudieron actualizar los agentes de la campaña")
             console.error(error)
-            return []
+            return {}
         }
     }
 }

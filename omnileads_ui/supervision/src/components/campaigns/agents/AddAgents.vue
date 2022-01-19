@@ -56,13 +56,6 @@ export default {
           );
           this.addAgentToCampaign(agent);
           this.selectedAgent = null;
-          this.$swal({
-            title: this.$t('sweet_alert.title.success'),
-            text: "Se agrego el agente exitosamente",
-            icon: "success",
-            timer: 2000,
-            showConfirmButton: false,
-          });
         }
       } else {
         this.$swal({

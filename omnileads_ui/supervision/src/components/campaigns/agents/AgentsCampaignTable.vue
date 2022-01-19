@@ -114,13 +114,6 @@ export default {
     },
     removeAgent(agent_id) {
       this.removeAgentOfCampaign(agent_id);
-      this.$swal({
-        title: this.$t('sweet_alert.title.success'),
-        text: "Se elimino el agente exitosamente",
-        icon: "success",
-        timer: 2000,
-        showConfirmButton: false,
-      });
     },
     onCellEditComplete(event) {
       let { data, newValue } = event;

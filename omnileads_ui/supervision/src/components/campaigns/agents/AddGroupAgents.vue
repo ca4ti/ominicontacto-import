@@ -66,14 +66,6 @@ export default {
             timer: 5000,
             showConfirmButton: false,
           });
-        } else {
-          this.$swal({
-            title: this.$t('sweet_alert.title.success'),
-            text: "Se agrego el grupo exitosamente",
-            icon: "success",
-            timer: 4000,
-            showConfirmButton: false,
-          });
         }
       } else {
         this.$swal({

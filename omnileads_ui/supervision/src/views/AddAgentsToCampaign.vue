@@ -87,7 +87,7 @@ export default {
       } else {
         this.$swal({
           title: this.$t("sweet_alert.title.error"),
-          text: "Los agentes se actualizaron exitosamente",
+          text: "Error al guardar los agentes",
           icon: "error",
           timer: 3000,
           showConfirmButton: false,

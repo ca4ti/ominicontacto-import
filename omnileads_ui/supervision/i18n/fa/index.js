@@ -3,6 +3,7 @@ export default {
     campaign: 'زنگ | زنگ ها',
     group: 'گروه | گروه ها',
     campaign_info: 'زنگ: {name}',
+    penalty: 'هزینه جریمه',
     agents_campaign: 'عوامل کمپین',
     clean_object: 'پاک کردن{object}',
     find_by: 'جستجو بر اساس {field}...',
@@ -11,7 +12,7 @@ export default {
         name: 'نام',
         username: 'Username',
         sip: 'ID SIP',
-        penalty: 'پنالتی'
+        penalty: 'هزینه جریمه'
     },
     sweet_alert: {
         title: {
@@ -43,6 +44,16 @@ export default {
             },
             agent_status: 'وضعیت نماینده',
             call_sumary: 'خلاصه تماس'
+        },
+        add_agents_to_campaign: {
+            delete_agent: 'عامل را حذف کنید',
+            empty_agents: 'هیچ عاملی پیدا نشد',
+            load_info: 'در حال بارگیری اطلاعات',
+            already_agent_in_campaign: 'این نماینده در حال حاضر در کمپین است',
+            already_agents_in_campaign: 'عوامل زیر قبلاً در کمپین حضور داشتند: ( {agents} )',
+            not_select_type: 'شما a را انتخاب نکردید {type}',
+            select_type: 'انتخاب کنید {type}',
+            how_to_edit_penalty: 'برای تغییر مجازات، ستون را انتخاب کنید',
         }
     }
 }

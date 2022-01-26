@@ -45,7 +45,7 @@ export default {
         ) {
           this.$swal({
             title: this.$t('sweet_alert.title.warning'),
-            text: "El agente ya está en la campaña",
+            text: this.$t('pages.add_agents_to_campaign.already_agent_in_campaign'),
             icon: "warning",
             timer: 2000,
             showConfirmButton: false,
@@ -60,7 +60,7 @@ export default {
       } else {
         this.$swal({
           title: this.$t('sweet_alert.title.warning'),
-          text: "No seleccionaste un agente",
+          text: this.$t('pages.add_agents_to_campaign.not_select_type', {type: this.$t('agent')}),
           icon: "warning",
           timer: 2000,
           showConfirmButton: false,

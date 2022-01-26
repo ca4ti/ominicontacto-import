@@ -59,9 +59,7 @@ export default {
         if (existing_agents.length > 0) {
           this.$swal({
             title: this.$t('sweet_alert.title.warning'),
-            text: `Los siguientes agentes ya estaban en la campaña:
-                  ( ${existing_agents.join(" - ")} ), por lo tanto
-                  no se agregaron`,
+            text: this.$t('pages.add_agents_to_campaign.already_agents_in_campaign', {agents: existing_agents.join(" - ")}),
             icon: "warning",
             timer: 5000,
             showConfirmButton: false,
@@ -70,7 +68,7 @@ export default {
       } else {
         this.$swal({
           title: this.$t('sweet_alert.title.warning'),
-          text: "No seleccionaste el grupo",
+          text: this.$t('pages.add_agents_to_campaign.not_select_type', {type: this.$t('group')}),
           icon: "warning",
           timer: 2000,
           showConfirmButton: false,

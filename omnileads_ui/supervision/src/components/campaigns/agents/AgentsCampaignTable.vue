@@ -42,8 +42,8 @@
           </span>
         </div>
       </template>
-      <template #empty> No se encontraron agentes. </template>
-      <template #loading> Cargando la información. Espere por favor. </template>
+      <template #empty> {{ $t('pages.add_agents_to_campaign.empty_agents') }}</template>
+      <template #loading> {{ $t('pages.add_agents_to_campaign.load_info') }} </template>
       <Column field="agent_full_name" :header="$t('agent_campaign.name')"></Column>
       <Column field="agent_username" :header="$t('agent_campaign.username')"></Column>
       <Column field="agent_sip_id" :header="$t('agent_campaign.sip')" :sortable="true"></Column>
@@ -54,7 +54,7 @@
             :options="penalties"
             optionLabel="label"
             optionValue="value"
-            placeholder="Selecciona penalty"
+            :placeholder="$t('pages.add_agents_to_campaign.select_type', {type: 'penalty'})"
           >
             <template #option="slotProps">
               <span>{{ slotProps.option.label }}</span>
@@ -69,6 +69,7 @@
               icon="pi pi-trash"
               class="p-button-danger"
               @click="removeAgent(slotProps.data.agent_id)"
+              v-tooltip.top="$t('pages.add_agents_to_campaign.delete_agent')"
             />
           </div>
         </template>

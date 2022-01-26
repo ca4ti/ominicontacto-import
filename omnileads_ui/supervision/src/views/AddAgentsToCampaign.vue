@@ -21,15 +21,14 @@
           <div>
             <Button
               class="p-mr-2 p-button-raised p-button-rounded p-button-info"
-              label="Penalty"
+              :label="$t('penalty')"
               icon="pi pi-info-circle"
-              v-tooltip.left="'Para modificar el penalty selecciona la columna'"
+              v-tooltip.left="$t('pages.add_agents_to_campaign.how_to_edit_penalty')"
             />
             <Button
               type="button"
               v-bind:label="$t('actions.save')"
               icon="pi pi-save"
-              v-tooltip.left="'Se actualizarán los agentes de la campaña'"
               class="p-button"
               @click="updateAgents(this.$route.params.campaign_id)"
             />

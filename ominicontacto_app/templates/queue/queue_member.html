@@ -33,6 +33,7 @@ along with this program.  If not, see http://www.gnu.org/licenses/.
 {% endblock %}
 
 {% block content %}
+    <iframe src="{% static 'omnileads-ui-supervision/add_agents_to_campaign.html' %}" class="crm" name="crm"></iframe>
          {% if campana%}
             <h1>{% blocktrans with campana_nombre=campana.nombre %}Campaña {{ campana_nombre }}{% endblocktrans %}</h1>
                 {% endif %}

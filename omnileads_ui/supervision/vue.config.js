@@ -2,12 +2,12 @@ const path = require("path");
 module.exports = {
     publicPath: '/static/omnileads-ui-supervision/',
     pages: {
-        page_dashboard: {
+        add_agents_to_campaign: {
             entry: 'src/pages/add_agents_to_campaign/main.js',
             template: 'public/add_agents_to_campaign.html',
             filename: 'add_agents_to_campaign.html',
             title: 'add_agents_to_campaign',
-            chunks: ['chunk-vendors', 'chunk-common', 'page_dashboard']
+            chunks: ['chunk-vendors', 'chunk-common', 'add_agents_to_campaign']
         },
     },
     devServer: {

@@ -31,7 +31,7 @@ import { createI18n } from 'vue-i18n'
 import es from '../../../i18n/es'
 import en from '../../../i18n/en'
 import fa from '../../../i18n/fa'
-import pt_br from '../../i18n/pt-br'
+import pt_br from '../../../i18n/pt-br'
 
 import Cookies from "universal-cookie";
 const cookies = new Cookies();

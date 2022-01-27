@@ -21,6 +21,7 @@ export default {
             success: '¡Operación exitosa!',
             error: '¡Operación erronea!',
             warning: '¡Advertencia!',
+            sure: '¿Estás seguro?',
         },
         icons: {
             success: 'success',
@@ -39,7 +40,16 @@ export default {
         update: 'Actualizar',
         show: 'Ver | Mostrar',
         save: 'Guardar',
-        find: 'Busca | Buscar'
+        find: 'Busca | Buscar',
+        exit: 'Salir',
+        close: 'Cerrar',
+        download: 'Descargar',
+        back_to: 'De regreso a {type}',
+        yes: 'Si',
+        no: 'No',
+        cancel: 'Cancelar',
+        clean_filter: 'Limpiar filtro',
+        cancelled: 'Operación cancelada',
     },
     pages: {
         dashboard_home_page: {
@@ -67,6 +77,8 @@ export default {
             agents_added_success: 'Los agentes se actualizaron exitosamente',
             agents_added_error: 'Error al actualizar los agentes',
             agent_deleted_success: 'Agente eliminado exitosamente',
+            agents_not_save: 'No se guardaron los agentes',
+            empty_campaign_notice: 'La campaña se quedará sin agentes',
         }
     }
 }

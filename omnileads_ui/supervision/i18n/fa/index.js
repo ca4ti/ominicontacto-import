@@ -21,6 +21,7 @@ export default {
             success: 'عملیات موفقیت آمیز!',
             error: 'عملیات اشتباه!',
             warning: 'هشدار!',
+            sure: 'مطمئنی؟',
         },
         icons: {
             success: 'success',
@@ -39,7 +40,16 @@ export default {
         update: 'به روز رسانی',
         show: 'دیدن | نمایش دهید',
         save: 'نگاه داشتن',
-        find: 'جستجو کنید'
+        find: 'جستجو کنید',
+        exit: 'برو بیرون',
+        close: 'بستن',
+        download: 'دانلود',
+        back_to: 'بازگشت به {type}',
+        yes: 'آره',
+        no: 'خیر',
+        cancel: 'لغو کنید',
+        clean_filter: 'فیلتر تمیز',
+        cancelled: 'عملیات لغو شد',
     },
     pages: {
         dashboard_home_page: {
@@ -67,6 +77,8 @@ export default {
             agents_added_success: 'عوامل با موفقیت ارتقا یافتند',
             agents_added_error: 'خطا در به‌روزرسانی عوامل',
             agent_deleted_success: 'نماینده با موفقیت حذف شد',
+            agents_not_save: 'عوامل ذخیره نشدند',
+            empty_campaign_notice: 'کارگزاران کمپین تمام خواهد شد',
         }
     }
 }

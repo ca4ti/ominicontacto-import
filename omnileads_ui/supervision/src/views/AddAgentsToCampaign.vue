@@ -30,7 +30,6 @@
             <Button
               type="button"
               v-bind:label="$t('actions.save')"
-              v-if="agents_by_campaign.length > 0"
               icon="pi pi-save"
               class="p-button"
               @click="updateAgents()"
@@ -81,28 +80,75 @@ export default {
           agent_penalty: agent["agent_penalty"],
         };
       });
-      const { status, ok } =
-        await this.agentsCampaignService.updateAgentsByCampaign({
-          campaign_id: this.campaign_id,
-          agents,
+      if (this.agents_by_campaign.length == 0) {
+        this.$swal({
+          title: this.$t("sweet_alert.title.sure"),
+          text: this.$t("pages.add_agents_to_campaign.empty_campaign_notice"),
+          icon: this.$t("sweet_alert.icons.warning"),
+          showCancelButton: true,
+          confirmButtonText: this.$t("actions.yes"),
+          cancelButtonText: this.$t("actions.no"),
+          backdrop: false,
+          reverseButtons: true,
+        }).then(async (result) => {
+          if (result.isConfirmed) {
+            const { status, ok } =
+              await this.agentsCampaignService.updateAgentsByCampaign({
+                campaign_id: this.campaign_id,
+                agents,
+              });
+            if (status == 200 && ok == true) {
+              await this.initAgentsCampaign(this.campaign_id);
+              this.$swal(
+                getToasConfig(
+                  this.$t("sweet_alert.title.success"),
+                  this.$t("pages.add_agents_to_campaign.agents_added_success"),
+                  this.$t("sweet_alert.icons.success")
+                )
+              );
+            } else {
+              this.$swal(
+                getToasConfig(
+                  this.$t("sweet_alert.title.error"),
+                  this.$t("pages.add_agents_to_campaign.agents_added_error"),
+                  this.$t("sweet_alert.icons.error")
+                )
+              );
+            }
+          } else if (result.dismiss === this.$swal.DismissReason.cancel) {
+            this.$swal(
+              getToasConfig(
+                this.$t("actions.cancelled"),
+                this.$t("pages.add_agents_to_campaign.agents_not_save"),
+                this.$t("sweet_alert.icons.error")
+              )
+            );
+          }
         });
-      if (status == 200 && ok == true) {
-        await this.initAgentsCampaign(this.campaign_id);
-        this.$swal(
-          getToasConfig(
-            this.$t("sweet_alert.title.success"),
-            this.$t("pages.add_agents_to_campaign.agents_added_success"),
-            this.$t("sweet_alert.icons.success")
-          )
-        );
       } else {
-        this.$swal(
-          getToasConfig(
-            this.$t("sweet_alert.title.error"),
-            this.$t("pages.add_agents_to_campaign.agents_added_error"),
-            this.$t("sweet_alert.icons.error")
-          )
-        );
+        const { status, ok } =
+          await this.agentsCampaignService.updateAgentsByCampaign({
+            campaign_id: this.campaign_id,
+            agents,
+          });
+        if (status == 200 && ok == true) {
+          await this.initAgentsCampaign(this.campaign_id);
+          this.$swal(
+            getToasConfig(
+              this.$t("sweet_alert.title.success"),
+              this.$t("pages.add_agents_to_campaign.agents_added_success"),
+              this.$t("sweet_alert.icons.success")
+            )
+          );
+        } else {
+          this.$swal(
+            getToasConfig(
+              this.$t("sweet_alert.title.error"),
+              this.$t("pages.add_agents_to_campaign.agents_added_error"),
+              this.$t("sweet_alert.icons.error")
+            )
+          );
+        }
       }
     },
   },

@@ -5,9 +5,9 @@
         v-model="selectedGroup"
         :options="groupsSelectize"
         optionLabel="group"
-        :placeholder="$tc('select_a',1,{field: 'grupo'})"
+        :placeholder="$tc('select_a', 1, { field: $tc('group', 1) })"
         :filter="true"
-        v-bind:filterPlaceholder="$t('find_by', {field: 'nombre'})"
+        v-bind:filterPlaceholder="$t('find_by', { field: $t('name') })"
       />
     </div>
     <div class="p-field p-col-12 p-md-3">
@@ -24,6 +24,7 @@
 <script>
 import { mapActions, mapState } from "vuex";
 import AgentsCampaignService from "@/services/agentsCampaignService.js";
+import { getToasConfig } from "@/helpers/sweet_alerts_helper.js";
 
 export default {
   data() {
@@ -57,22 +58,35 @@ export default {
         });
         this.selectedGroup = null;
         if (existing_agents.length > 0) {
-          this.$swal({
-            title: this.$t('sweet_alert.title.warning'),
-            text: this.$t('pages.add_agents_to_campaign.already_agents_in_campaign', {agents: existing_agents.join(" - ")}),
-            icon: "warning",
-            timer: 5000,
-            showConfirmButton: false,
-          });
+          this.$swal(
+            getToasConfig(
+              this.$t("sweet_alert.title.warning"),
+              this.$t(
+                "pages.add_agents_to_campaign.already_agents_in_campaign",
+                { agents: existing_agents.join(" - ") }
+              ),
+              this.$t("sweet_alert.icons.warning")
+            )
+          );
+        } else {
+          this.$swal(
+            getToasConfig(
+              this.$t("sweet_alert.title.success"),
+              this.$t("pages.add_agents_to_campaign.group_added_success"),
+              this.$t("sweet_alert.icons.success")
+            )
+          );
         }
       } else {
-        this.$swal({
-          title: this.$t('sweet_alert.title.warning'),
-          text: this.$t('pages.add_agents_to_campaign.not_select_type', {type: this.$t('group')}),
-          icon: "warning",
-          timer: 2000,
-          showConfirmButton: false,
-        });
+        this.$swal(
+          getToasConfig(
+            this.$t("sweet_alert.title.warning"),
+            this.$t("pages.add_agents_to_campaign.not_select_type", {
+              type: this.$t("group"),
+            }),
+            this.$t("sweet_alert.icons.warning")
+          )
+        );
       }
     },
     ...mapActions(["addAgentToCampaign"]),

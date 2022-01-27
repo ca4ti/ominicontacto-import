@@ -1,4 +1,6 @@
 export default {
+    option: 'گزینه | گزینه ها',
+    name: 'نام',
     agent: 'عامل | عوامل',
     campaign: 'زنگ | زنگ ها',
     group: 'گروه | گروه ها',
@@ -19,6 +21,12 @@ export default {
             success: 'عملیات موفقیت آمیز!',
             error: 'عملیات اشتباه!',
             warning: 'هشدار!',
+        },
+        icons: {
+            success: 'success',
+            error: 'error',
+            warning: 'warning',
+            info: 'info',
         }
     },
     actions: {
@@ -54,6 +62,11 @@ export default {
             not_select_type: 'شما a را انتخاب نکردید {type}',
             select_type: 'انتخاب کنید {type}',
             how_to_edit_penalty: 'برای تغییر مجازات، ستون را انتخاب کنید',
+            group_added_success: 'گروه با موفقیت اضافه شد',
+            agent_added_success: 'عامل با موفقیت اضافه شد',
+            agents_added_success: 'عوامل با موفقیت ارتقا یافتند',
+            agents_added_error: 'خطا در به‌روزرسانی عوامل',
+            agent_deleted_success: 'نماینده با موفقیت حذف شد',
         }
     }
 }

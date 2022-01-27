@@ -5,9 +5,9 @@
         v-model="selectedAgent"
         :options="agents"
         optionLabel="agent"
-        :placeholder="$tc('select_a',1,{field: 'agente'})"
+        :placeholder="$tc('select_a', 1, { field: $tc('agent', 1) })"
         :filter="true"
-        v-bind:filterPlaceholder="$t('find_by', {field: 'nombre'})"
+        v-bind:filterPlaceholder="$t('find_by', { field: $t('name') })"
       />
     </div>
     <div class="p-field p-col-12 p-md-3">
@@ -24,6 +24,7 @@
 <script>
 import { mapActions, mapState } from "vuex";
 import AgentsCampaignService from "@/services/agentsCampaignService.js";
+import { getToasConfig } from "@/helpers/sweet_alerts_helper.js";
 
 export default {
   data() {
@@ -43,28 +44,37 @@ export default {
         if (
           this.agents_by_campaign.find((agent) => agent_id == agent["agent_id"])
         ) {
-          this.$swal({
-            title: this.$t('sweet_alert.title.warning'),
-            text: this.$t('pages.add_agents_to_campaign.already_agent_in_campaign'),
-            icon: "warning",
-            timer: 2000,
-            showConfirmButton: false,
-          });
+          this.$swal(
+            getToasConfig(
+              this.$t("sweet_alert.title.warning"),
+              this.$t("pages.add_agents_to_campaign.already_agent_in_campaign"),
+              this.$t("sweet_alert.icons.warning")
+            )
+          );
         } else {
           var agent = this.active_agents.find(
             (agent) => agent_id == agent["agent_id"]
           );
           this.addAgentToCampaign(agent);
           this.selectedAgent = null;
+          this.$swal(
+            getToasConfig(
+              this.$t("sweet_alert.title.success"),
+              this.$t("pages.add_agents_to_campaign.agent_added_success"),
+              this.$t("sweet_alert.icons.success")
+            )
+          );
         }
       } else {
-        this.$swal({
-          title: this.$t('sweet_alert.title.warning'),
-          text: this.$t('pages.add_agents_to_campaign.not_select_type', {type: this.$t('agent')}),
-          icon: "warning",
-          timer: 2000,
-          showConfirmButton: false,
-        });
+        this.$swal(
+          getToasConfig(
+            this.$t("sweet_alert.title.warning"),
+            this.$t("pages.add_agents_to_campaign.not_select_type", {
+              type: this.$t("agent"),
+            }),
+            this.$t("sweet_alert.icons.warning")
+          )
+        );
       }
     },
     ...mapActions(["addAgentToCampaign"]),

@@ -236,45 +236,8 @@ class QueueMemberCampanaView(TemplateView):
     def get_context_data(self, **kwargs):
         context = super(QueueMemberCampanaView, self).get_context_data(**kwargs)
         campana = self.get_object().campana
-        agentes = AgenteProfile.objects.obtener_activos().prefetch_related('user')
-
-        queue_member_list = campana.queue_campana.queuemember.all()
-        if 'search' in self.request.GET:
-            GET_copy = self.request.GET.copy()
-            search = GET_copy.pop('search')[0]
-            queue_member_list = queue_member_list.filter(Q(membername__icontains=search))
-            queue_member_form = QueueMemberForm(data=GET_copy or None,
-                                                members=agentes)
-            grupo_agente_form = GrupoAgenteForm(GET_copy or None)
-        else:
-            queue_member_form = QueueMemberForm(data=self.request.GET or None,
-                                                members=agentes)
-            grupo_agente_form = GrupoAgenteForm(self.request.GET or None)
-        context['queue_member_list'] = queue_member_list
         context['campana'] = campana
         context['campaign_id'] = campana.pk
-        context['queue_member_form'] = queue_member_form
-        context['grupo_agente_form'] = grupo_agente_form
-        if campana.type is Campana.TYPE_ENTRANTE:
-            context['url_finalizar'] = 'campana_list'
-        elif campana.type is Campana.TYPE_DIALER:
-            context['url_finalizar'] = 'campana_dialer_list'
-        elif campana.type is Campana.TYPE_MANUAL:
-            context['url_finalizar'] = 'campana_manual_list'
-        elif campana.type is Campana.TYPE_PREVIEW:
-            context['url_finalizar'] = 'campana_preview_list'
-
-        if campana.sistema_externo:
-            agentes_sin_id_externo = campana.queue_campana.members.exclude(
-                id__in=campana.sistema_externo.agentes.values_list('id', flat=True))
-            if agentes_sin_id_externo.exists():
-                msg = _('Los siguientes agentes no tienen identificador externo:<ul>')
-                for agente in agentes_sin_id_externo:
-                    nombre = agente.user.get_full_name()
-                    msg += '<li>' + nombre + '</li>'
-                msg += '</ul>'
-                messages.warning(self.request, msg)
-
         return context
 
     def render_to_response(self, context, **response_kwargs):

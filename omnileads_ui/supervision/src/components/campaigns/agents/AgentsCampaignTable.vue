@@ -28,7 +28,7 @@
           <Button
             type="button"
             icon="pi pi-filter-slash"
-            :label="$t('clean_object',{object: 'filtros'})"
+            :label="$t('clean_object', { object: 'filtros' })"
             class="p-button-outlined"
             @click="clearFilter()"
           />
@@ -37,24 +37,46 @@
             <InputText
               v-model="filters['global'].value"
               icon="pi pi-check"
-              :placeholder="$t('find_by', {field: 'nombre'})"
+              :placeholder="$t('find_by', { field: $t('name') })"
             />
           </span>
         </div>
       </template>
-      <template #empty> {{ $t('pages.add_agents_to_campaign.empty_agents') }}</template>
-      <template #loading> {{ $t('pages.add_agents_to_campaign.load_info') }} </template>
-      <Column field="agent_full_name" :header="$t('agent_campaign.name')"></Column>
-      <Column field="agent_username" :header="$t('agent_campaign.username')"></Column>
-      <Column field="agent_sip_id" :header="$t('agent_campaign.sip')" :sortable="true"></Column>
-      <Column field="agent_penalty" :header="$t('agent_campaign.penalty')" :sortable="true">
+      <template #empty>
+        {{ $t("pages.add_agents_to_campaign.empty_agents") }}</template
+      >
+      <template #loading>
+        {{ $t("pages.add_agents_to_campaign.load_info") }}
+      </template>
+      <Column
+        field="agent_full_name"
+        :header="$t('agent_campaign.name')"
+      ></Column>
+      <Column
+        field="agent_username"
+        :header="$t('agent_campaign.username')"
+      ></Column>
+      <Column
+        field="agent_sip_id"
+        :header="$t('agent_campaign.sip')"
+        :sortable="true"
+      ></Column>
+      <Column
+        field="agent_penalty"
+        :header="$t('agent_campaign.penalty')"
+        :sortable="true"
+      >
         <template #editor="{ data, field }">
           <Dropdown
             v-model="data[field]"
             :options="penalties"
             optionLabel="label"
             optionValue="value"
-            :placeholder="$t('pages.add_agents_to_campaign.select_type', {type: 'penalty'})"
+            :placeholder="
+              $t('pages.add_agents_to_campaign.select_type', {
+                type: 'penalty',
+              })
+            "
           >
             <template #option="slotProps">
               <span>{{ slotProps.option.label }}</span>
@@ -62,7 +84,11 @@
           </Dropdown>
         </template>
       </Column>
-      <Column :exportable="false" style="min-width: 8rem">
+      <Column
+        :header="$tc('option')"
+        :exportable="false"
+        style="min-width: 8rem"
+      >
         <template #body="slotProps">
           <div class="p-d-flex p-jc-center">
             <Button
@@ -81,6 +107,7 @@
 <script>
 import { mapState, mapActions } from "vuex";
 import { FilterMatchMode } from "primevue/api";
+import { getToasConfig } from "@/helpers/sweet_alerts_helper.js";
 
 export default {
   data() {
@@ -115,6 +142,13 @@ export default {
     },
     removeAgent(agent_id) {
       this.removeAgentOfCampaign(agent_id);
+      this.$swal(
+        getToasConfig(
+          this.$t("sweet_alert.title.success"),
+          this.$t("pages.add_agents_to_campaign.agent_deleted_success"),
+          this.$t("sweet_alert.icons.success")
+        )
+      );
     },
     onCellEditComplete(event) {
       let { data, newValue } = event;

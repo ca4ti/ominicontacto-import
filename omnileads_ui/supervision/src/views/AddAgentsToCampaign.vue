@@ -23,11 +23,14 @@
               class="p-mr-2 p-button-raised p-button-rounded p-button-info"
               :label="$t('penalty')"
               icon="pi pi-info-circle"
-              v-tooltip.left="$t('pages.add_agents_to_campaign.how_to_edit_penalty')"
+              v-tooltip.left="
+                $t('pages.add_agents_to_campaign.how_to_edit_penalty')
+              "
             />
             <Button
               type="button"
               v-bind:label="$t('actions.save')"
+              v-if="agents_by_campaign.length > 0"
               icon="pi pi-save"
               class="p-button"
               @click="updateAgents()"
@@ -47,6 +50,7 @@ import AddGroupAgents from "@/components/campaigns/agents/AddGroupAgents.vue";
 import AgentsCampaignTable from "@/components/campaigns/agents/AgentsCampaignTable.vue";
 import AgentsCampaignService from "@/services/agentsCampaignService.js";
 import Cookies from "universal-cookie";
+import { getToasConfig } from "@/helpers/sweet_alerts_helper.js";
 
 export default {
   components: {
@@ -57,8 +61,8 @@ export default {
   data() {
     return {
       cookies: null,
-      campaign_id: null
-    }
+      campaign_id: null,
+    };
   },
   created() {
     this.cookies = new Cookies();
@@ -77,29 +81,28 @@ export default {
           agent_penalty: agent["agent_penalty"],
         };
       });
-      const { status, ok } = await this.agentsCampaignService.updateAgentsByCampaign(
-        {
+      const { status, ok } =
+        await this.agentsCampaignService.updateAgentsByCampaign({
           campaign_id: this.campaign_id,
           agents,
-        }
-      );
+        });
       if (status == 200 && ok == true) {
         await this.initAgentsCampaign(this.campaign_id);
-        this.$swal({
-          title: this.$t("sweet_alert.title.success"),
-          text: "Los agentes se actualizaron exitosamente",
-          icon: "success",
-          timer: 3000,
-          showConfirmButton: false,
-        });
+        this.$swal(
+          getToasConfig(
+            this.$t("sweet_alert.title.success"),
+            this.$t("pages.add_agents_to_campaign.agents_added_success"),
+            this.$t("sweet_alert.icons.success")
+          )
+        );
       } else {
-        this.$swal({
-          title: this.$t("sweet_alert.title.error"),
-          text: "Error al guardar los agentes",
-          icon: "error",
-          timer: 3000,
-          showConfirmButton: false,
-        });
+        this.$swal(
+          getToasConfig(
+            this.$t("sweet_alert.title.error"),
+            this.$t("pages.add_agents_to_campaign.agents_added_error"),
+            this.$t("sweet_alert.icons.error")
+          )
+        );
       }
     },
   },

@@ -1,4 +1,6 @@
 export default {
+    option: 'Option | Options',
+    name: 'Name',
     agent: 'Agent | Agents',
     campaign: 'Campaign | Campaigns',
     group: 'Group | Groups',
@@ -19,6 +21,12 @@ export default {
             success: 'Successful!',
             error: 'Error!',
             warning: 'Warning!',
+        },
+        icons: {
+            success: 'success',
+            error: 'error',
+            warning: 'warning',
+            info: 'info',
         }
     },
     actions: {
@@ -54,6 +62,11 @@ export default {
             not_select_type: 'You did not select a {type}',
             select_type: 'Choose {type}',
             how_to_edit_penalty: 'To modify the penalty select the column',
+            group_added_success: 'The group was added successfully',
+            agent_added_success: 'The agent was added successfully',
+            agents_added_success: 'Agents upgraded successfully',
+            agents_added_error: 'Error updating agents',
+            agent_deleted_success: 'Agent removed successfully',
         }
     }
 }

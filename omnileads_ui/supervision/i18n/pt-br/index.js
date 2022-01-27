@@ -1,4 +1,6 @@
 export default {
+    option: 'Opção | Opções',
+    name: 'Nome',
     agent: 'Agente | Agentes',
     campaign: 'Campainha | Campainhas',
     group: 'Grupo | Grupos',
@@ -19,6 +21,12 @@ export default {
             success: '¡Operação bem-sucedida!',
             error: '¡Operação errada!',
             warning: '¡Aviso!',
+        },
+        icons: {
+            success: 'success',
+            error: 'error',
+            warning: 'warning',
+            info: 'info',
         }
     },
     actions: {
@@ -54,6 +62,11 @@ export default {
             not_select_type: 'Você não selecionou um {type}',
             select_type: 'Escolher {type}',
             how_to_edit_penalty: 'Para modificar a penalidade selecione a coluna',
+            group_added_success: 'O grupo foi adicionado com sucesso',
+            agent_added_success: 'Agente adicionado com sucesso',
+            agents_added_success: 'Agentes atualizados com sucesso',
+            agents_added_error: 'Erro ao atualizar os agentes',
+            agent_deleted_success: 'Agente removido com sucesso',
         }
     }
 }

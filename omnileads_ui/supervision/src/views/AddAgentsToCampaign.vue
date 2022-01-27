@@ -48,7 +48,6 @@ import AddAgents from "@/components/campaigns/agents/AddAgents.vue";
 import AddGroupAgents from "@/components/campaigns/agents/AddGroupAgents.vue";
 import AgentsCampaignTable from "@/components/campaigns/agents/AgentsCampaignTable.vue";
 import AgentsCampaignService from "@/services/agentsCampaignService.js";
-import Cookies from "universal-cookie";
 import { getToasConfig } from "@/helpers/sweet_alerts_helper.js";
 
 export default {
@@ -59,13 +58,12 @@ export default {
   },
   data() {
     return {
-      cookies: null,
       campaign_id: null,
     };
   },
   created() {
-    this.cookies = new Cookies();
-    this.campaign_id = this.cookies.get("campaign_id");
+    let element = window.parent.document.getElementById("add_agents_to_campaign")
+    this.campaign_id = element.value
     this.agentsCampaignService = new AgentsCampaignService();
     this.initAgentsCampaign(this.campaign_id);
     this.initActiveAgents();

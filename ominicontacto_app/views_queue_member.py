@@ -237,14 +237,7 @@ class QueueMemberCampanaView(TemplateView):
         context = super(QueueMemberCampanaView, self).get_context_data(**kwargs)
         campana = self.get_object().campana
         context['campana'] = campana
-        context['campaign_id'] = campana.pk
         return context
-
-    def render_to_response(self, context, **response_kwargs):
-        response = super(QueueMemberCampanaView, self).render_to_response(context, **response_kwargs)
-        response.set_cookie('campaign_id', context['campaign_id'])
-        return response
-
 
 def remover_agente_cola_asterisk(campana, agente, client):
     queue = campana.get_queue_id_name()

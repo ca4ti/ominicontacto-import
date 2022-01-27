@@ -252,6 +252,7 @@ class QueueMemberCampanaView(TemplateView):
             grupo_agente_form = GrupoAgenteForm(self.request.GET or None)
         context['queue_member_list'] = queue_member_list
         context['campana'] = campana
+        context['campaign_id'] = campana.pk
         context['queue_member_form'] = queue_member_form
         context['grupo_agente_form'] = grupo_agente_form
         if campana.type is Campana.TYPE_ENTRANTE:
@@ -275,6 +276,11 @@ class QueueMemberCampanaView(TemplateView):
                 messages.warning(self.request, msg)
 
         return context
+
+    def render_to_response(self, context, **response_kwargs):
+        response = super(QueueMemberCampanaView, self).render_to_response(context, **response_kwargs)
+        response.set_cookie('campaign_id', context['campaign_id'])
+        return response
 
 
 def remover_agente_cola_asterisk(campana, agente, client):

@@ -30,7 +30,7 @@
               v-bind:label="$t('actions.save')"
               icon="pi pi-save"
               class="p-button"
-              @click="updateAgents(this.$route.params.campaign_id)"
+              @click="updateAgents()"
             />
           </div>
         </div>
@@ -46,6 +46,7 @@ import AddAgents from "@/components/campaigns/agents/AddAgents.vue";
 import AddGroupAgents from "@/components/campaigns/agents/AddGroupAgents.vue";
 import AgentsCampaignTable from "@/components/campaigns/agents/AgentsCampaignTable.vue";
 import AgentsCampaignService from "@/services/agentsCampaignService.js";
+import Cookies from "universal-cookie";
 
 export default {
   components: {
@@ -53,15 +54,23 @@ export default {
     AddGroupAgents,
     AddAgents,
   },
+  data() {
+    return {
+      cookies: null,
+      campaign_id: null
+    }
+  },
   created() {
+    this.cookies = new Cookies();
+    this.campaign_id = this.cookies.get("campaign_id");
     this.agentsCampaignService = new AgentsCampaignService();
-    this.initAgentsCampaign(this.$route.params.campaign_id);
+    this.initAgentsCampaign(this.campaign_id);
     this.initActiveAgents();
     this.initGroups();
   },
   methods: {
     ...mapActions(["initAgentsCampaign", "initActiveAgents", "initGroups"]),
-    async updateAgents(campaign_id) {
+    async updateAgents() {
       const agents = await this.agents_by_campaign.map((agent) => {
         return {
           agent_id: agent["agent_id"],
@@ -70,12 +79,12 @@ export default {
       });
       const { status, ok } = await this.agentsCampaignService.updateAgentsByCampaign(
         {
-          campaign_id,
+          campaign_id: this.campaign_id,
           agents,
         }
       );
       if (status == 200 && ok == true) {
-        await this.initAgentsCampaign(campaign_id);
+        await this.initAgentsCampaign(this.campaign_id);
         this.$swal({
           title: this.$t("sweet_alert.title.success"),
           text: "Los agentes se actualizaron exitosamente",

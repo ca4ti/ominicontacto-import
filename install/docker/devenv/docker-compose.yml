@@ -142,8 +142,6 @@ services:
     networks:
       - devenv
     privileged: true
-    ports:
-      - ${NGINX_EXT_PORT}:443/tcp
     restart: on-failure
     stop_grace_period: 1m30s
     volumes:
@@ -195,11 +193,13 @@ services:
     image: freetechsolutions/omlhaproxy:latest
     networks:
       - devenv
+    ports:
+      - ${NGINX_EXT_PORT}:443/tcp  
     privileged: true
     restart: on-failure
     stop_grace_period: 1m30s
     volumes:
-      - ../../../../omlhaproxy/build/config/haproxy.conf:/etc/haproxy/
+      - ../../../../omlhaproxy/build/docker/config/haproxy.conf:/etc/haproxy/
 
   redis:
     container_name: omlredis

@@ -206,9 +206,10 @@ services:
     dns: 8.8.8.8
     environment:
       - TZ=${TZ}
+      - ROLE=main
     networks:
       - devenv
-    image: redislabs/redisgears:${REDISGEARS_VERSION}
+    image: freetechsolutions/omlredis:${REDISGEARS_VERSION}
     privileged: true
     restart: on-failure
     stop_grace_period: 1m30s
@@ -222,9 +223,7 @@ services:
     dns: 8.8.8.8
     environment:
       - TZ=${TZ}
-      - SENTINEL_QUORUM=2
-      - SENTINEL_DOWN_AFTER=3000
-      - SENTINEL_FAILOVER=6000      
+      - ROLE=replica
     networks:
       - devenv
     image: freetechsolutions/omlredis:${REDISGEARS_VERSION}
@@ -242,9 +241,7 @@ services:
     dns: 8.8.8.8
     environment:
       - TZ=${TZ}
-      - SENTINEL_QUORUM=2
-      - SENTINEL_DOWN_AFTER=3000
-      - SENTINEL_FAILOVER=6000      
+      - ROLE=replica
     networks:
       - devenv
     image: freetechsolutions/omlredis:${REDISGEARS_VERSION}
@@ -263,9 +260,7 @@ services:
     dns: 8.8.8.8
     environment:
       - TZ=${TZ}
-      - SENTINEL_QUORUM=2
-      - SENTINEL_DOWN_AFTER=3000
-      - SENTINEL_FAILOVER=6000      
+      - ROLE=replica
     networks:
       - devenv
     image: freetechsolutions/omlredis:${REDISGEARS_VERSION}
@@ -376,18 +371,20 @@ services:
     container_name: omls3
     image: quay.io/minio/minio
     command: server --console-address ":9001" /data
-    expose:
-      - "9000"
-      - "9001"
-    ports:
-      - 9001:9001/tcp
     environment:
       - MINIO_ROOT_USER=${S3_HTTP_ADMIN_USER}
       - MINIO_ROOT_PASSWORD=${S3_HTTP_ADMIN_PASS}
     networks:
       - devenv
+    expose:
+      - "9000"
+      - "9001"
+    ports:
+      - 9001:9001/tcp      
     volumes:
       - minio_data:/data
+      #- ../../../../../../Documents/minio:/root/.minio/certs/
+      - ../ci-images/certs_minio:/root/.minio/certs/
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
       interval: 30s

@@ -127,10 +127,10 @@ services:
     volumes:
       - ../../../../omlkamailio/source/conf:/etc/kamailio/
 
-  kamailio_pstn:
+  siproxy:
     command:
       - /bin/bash
-    container_name: omlkamailio_pstn
+    container_name: omlsipproxy
     depends_on:
       - redis
       - acd
@@ -148,11 +148,13 @@ services:
     image: freetechsolutions/omlkam:latest
     networks:
       - devenv
+    ports:
+      - 5060:5060/udp      
     privileged: true
     restart: on-failure
     stop_grace_period: 1m30s
     volumes:
-      - ../../../../omlkamailio_pstn/source/conf:/etc/kamailio/
+      - ../../../../omlsipproxy/source/conf:/etc/kamailio/
 
   mariadb:
     container_name: omlmariadb
@@ -221,7 +223,7 @@ services:
     networks:
       - devenv
     ports:
-      - 5060:5060/udp
+      - 5061:5060/udp
       - 10000-10020:10000-10020/udp
     privileged: true
     restart: on-failure

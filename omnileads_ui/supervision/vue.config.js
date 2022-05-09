@@ -1,13 +1,30 @@
-import { getCsfrToken, getPageConfig } from './src/helpers/vue_config_helper';
+function getCsfrToken (cookie) {
+    const arr = cookie.split(';');
+    for (const a in arr) {
+        if (arr[a].search('csrftoken=') !== -1) {
+            return arr[a].replace('csrftoken=', '');
+        }
+    }
+}
+
+function getPageConfig(pageName) {
+    return {
+        entry: 'src/main.js',
+        template: `public/${pageName}.html`,
+        filename: pageName,
+        title: pageName,
+        chunks: ['chunk-vendors', 'chunk-common', pageName]
+    };
+}
 
 module.exports = {
     publicPath: '/static/omnileads-ui-supervision/',
     pages: {
-        ...getPageConfig('supervision_dashboard'),
-        ...getPageConfig('audit_page'),
-        ...getPageConfig('add_agents_to_campaign'),
-        ...getPageConfig('pause_sets'),
-        ...getPageConfig('external_sities')
+        'supervision_dashboard': getPageConfig('supervision_dashboard'),
+        'audit_supervisor': getPageConfig('audit_supervisor'),
+        'add_agents_to_campaign': getPageConfig('add_agents_to_campaign'),
+        'pause_sets': getPageConfig('pause_sets'),
+        'external_sities': getPageConfig('external_sities')
     },
     devServer: {
         proxy: {

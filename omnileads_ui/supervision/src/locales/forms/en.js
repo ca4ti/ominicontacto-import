@@ -12,5 +12,8 @@ export default {
     },
     call_disposition: {
         enter_name: 'Enter the name'
+    },
+    external_system: {
+        enter_name: 'Enter the name'
     }
 };

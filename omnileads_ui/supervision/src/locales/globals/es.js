@@ -44,6 +44,7 @@ export default {
     infinite_pause: 'Pausa infinita',
     external_site: 'Sitio externo | Sitios externos',
     call_disposition: 'Calificacion | Calificaciones',
+    external_system: 'Sistema externo | Sistemas externos',
     // -------------
     // -- Actions --
     // -------------
@@ -64,6 +65,7 @@ export default {
     close: 'Cerrar',
     download: 'Descarga | Descargar',
     back_to: 'De regreso a {type}',
+    back: 'Atras',
     yes: 'Si',
     no: 'No',
     a: 'Un | Una',

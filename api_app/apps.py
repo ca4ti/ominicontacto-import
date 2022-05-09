@@ -177,6 +177,16 @@ class ApiAppConfig(AppConfig):
              'roles': ['Administrador', 'Gerente', 'Supervisor']},
             {'nombre': 'api_call_dispositions_detail',
              'roles': ['Administrador', 'Gerente', 'Supervisor']},
+            {'nombre': 'api_external_systems_list',
+             'roles': ['Administrador', 'Gerente', 'Supervisor']},
+            {'nombre': 'api_external_systems_create',
+             'roles': ['Administrador', 'Gerente', 'Supervisor']},
+            {'nombre': 'api_external_systems_update',
+             'roles': ['Administrador', 'Gerente', 'Supervisor']},
+            {'nombre': 'api_external_systems_detail',
+             'roles': ['Administrador', 'Gerente', 'Supervisor']},
+            {'nombre': 'api_agents_external_system_list',
+             'roles': ['Administrador', 'Gerente', 'Supervisor']},
         ]
 
     informacion_de_permisos = {
@@ -382,5 +392,20 @@ class ApiAppConfig(AppConfig):
              'version': '1.23.0'},
         'api_call_dispositions_detail':
             {'descripcion': _('Obtiene detalle de una calificacion'),
+             'version': '1.23.0'},
+        'api_external_systems_list':
+            {'descripcion': _('Lista los sistemas externos'),
+             'version': '1.23.0'},
+        'api_external_systems_create':
+            {'descripcion': _('Crea un sistema externo'),
+             'version': '1.23.0'},
+        'api_external_systems_update':
+            {'descripcion': _('Actualiza un sistema externo'),
+             'version': '1.23.0'},
+        'api_external_systems_detail':
+            {'descripcion': _('Obtiene detalle de un sistema externo'),
+             'version': '1.23.0'},
+        'api_agents_external_system_list':
+            {'descripcion': _('Obtiene los agentes para asignar a un sistema externo'),
              'version': '1.23.0'},
     }

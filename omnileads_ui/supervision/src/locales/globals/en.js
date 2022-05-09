@@ -43,6 +43,7 @@ export default {
     pause_config_by_set: 'Configuraciones de pausas del conjunto: {set}',
     infinite_pause: 'Infinite pause',
     call_disposition: 'Call Disposition | Call Dispositions',
+    external_system: 'External System | External Systems',
     // -------------
     // -- Actions --
     // -------------
@@ -63,6 +64,7 @@ export default {
     close: 'Close',
     download: 'Download | Download',
     back_to: 'Back to {type}',
+    back: 'Back',
     yes: 'Yes',
     no: 'No',
     cancel: 'Cancel',

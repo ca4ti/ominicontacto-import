@@ -37,5 +37,15 @@ export default {
     call_disposition: {
         id: 'ID',
         name: 'Nombre'
+    },
+    external_system: {
+        id: 'ID',
+        name: 'Nombre',
+        agents: 'Agentes'
+    },
+    agent_external_system: {
+        id: 'ID',
+        external_id: 'Id Externo Agente',
+        agent: 'Agente'
     }
 };

@@ -41,5 +41,9 @@ export default {
         list_title: 'Calificaciones',
         edit_title: 'Edita la calificacion',
         new_title: 'Nueva calificacion'
+    },
+    external_system: {
+        new_agent_on_system: 'Nuevo agente en sistema',
+        edit_agent_on_system: 'Edita agente en sistema'
     }
 };

@@ -63,6 +63,7 @@ export default {
     close: 'Fechar',
     download: 'Download',
     back_to: 'De volta a {type}',
+    back: 'De volta',
     yes: 'Sim',
     no: 'Não',
     a: 'Um | Uma',

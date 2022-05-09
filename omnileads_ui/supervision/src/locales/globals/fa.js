@@ -63,6 +63,7 @@ export default {
     close: 'بستن',
     download: 'دانلود',
     back_to: 'بازگشت به {type}',
+    back: 'بازگشت',
     yes: 'آره',
     no: 'خیر',
     a: 'آ | Una',

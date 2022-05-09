@@ -1,43 +1,13 @@
-function getCsfrToken (cookie) {
-    const arr = cookie.split(';');
-    for (const a in arr) {
-        if (arr[a].search('csrftoken=') !== -1) {
-            return arr[a].replace('csrftoken=', '');
-        }
-    }
-}
+import { getCsfrToken, getPageConfig } from './src/helpers/vue_config_helper';
 
 module.exports = {
     publicPath: '/static/omnileads-ui-supervision/',
     pages: {
-        supervision_dashboard: {
-            entry: 'src/main.js',
-            template: 'public/supervision_dashboard.html',
-            filename: 'supervision_dashboard.html',
-            title: 'supervision_dashboard',
-            chunks: ['chunk-vendors', 'chunk-common', 'supervision_dashboard']
-        },
-        page_audit: {
-            entry: 'src/main.js',
-            template: 'public/audit.html',
-            filename: 'audit.html',
-            title: 'audit',
-            chunks: ['chunk-vendors', 'chunk-common', 'page_audit']
-        },
-        add_agents_to_campaign: {
-            entry: 'src/main.js',
-            template: 'public/add_agents_to_campaign.html',
-            filename: 'add_agents_to_campaign.html',
-            title: 'add_agents_to_campaign',
-            chunks: ['chunk-vendors', 'chunk-common', 'add_agents_to_campaign']
-        },
-        pause_sets: {
-            entry: 'src/main.js',
-            template: 'public/pause_sets.html',
-            filename: 'pause_sets.html',
-            title: 'pause_sets',
-            chunks: ['chunk-vendors', 'chunk-common', 'pause_sets']
-        }
+        ...getPageConfig('supervision_dashboard'),
+        ...getPageConfig('audit_page'),
+        ...getPageConfig('add_agents_to_campaign'),
+        ...getPageConfig('pause_sets'),
+        ...getPageConfig('external_sities')
     },
     devServer: {
         proxy: {
@@ -56,7 +26,6 @@ module.exports = {
             '/media': {
                 target: 'https://nginx',
                 changeOrigin: true
-
             }
         }
     }

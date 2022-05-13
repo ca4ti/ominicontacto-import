@@ -54,12 +54,12 @@ from api_app.serializers import (
     CampanaSerializer, AuditSupervisorSerializer,
     AgenteDeCampanaSerializer, AgenteActivoSerializer,
     ConfiguracionDePausaSerializer, ConjuntoDePausaSerializer,
-    GrupoSerializer, PausaSerializer)
+    GrupoSerializer, PausaSerializer, SitioExternoSerializer)
 
 from ominicontacto_app.models import (
     Campana, CalificacionCliente, ConfiguracionDePausa,
     ConjuntoDePausa, Pausa, QueueMember, Grupo,
-    AgenteProfile, AgendaContacto, AgenteEnContacto)
+    AgenteProfile, AgendaContacto, AgenteEnContacto, SitioExterno)
 from ominicontacto_app.services.asterisk.supervisor_activity import (
     SupervisorActivityAmiManager)
 from ominicontacto_app.services.asterisk.asterisk_ami import (
@@ -1381,5 +1381,308 @@ class ConfiguracionDePausaUpdate(APIView):
             data['status'] = 'ERROR'
             data['message'] = _('Error al actualizar '
                                 'la configuracion de pausa')
+            return Response(
+                data=data, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+class SitioExternoList(APIView):
+    permission_classes = (TienePermisoOML, )
+    authentication_classes = (
+        SessionAuthentication, ExpiringTokenAuthentication, )
+    renderer_classes = (JSONRenderer, )
+    http_method_names = ['get']
+
+    def get(self, request):
+        data = {
+            'status': 'SUCCESS',
+            'message': _('Se obtuvieron los sitios '
+                         'externos de forma exitosa'),
+            'externalSities': []}
+        try:
+            sitios = SitioExterno.objects.filter(oculto=False)
+            data['externalSities'] = [
+                SitioExternoSerializer(sitio).data for sitio in sitios]
+            return Response(data=data, status=status.HTTP_200_OK)
+        except SitioExterno.DoesNotExist:
+            data['status'] = 'ERROR'
+            data['message'] = _(u'Error al obtener los sitios externos')
+            return Response(
+                data=data, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+class SitioExternoCreate(APIView):
+    permission_classes = (TienePermisoOML, )
+    authentication_classes = (
+        SessionAuthentication, ExpiringTokenAuthentication, )
+    renderer_classes = (JSONRenderer, )
+    http_method_names = ['post']
+
+    def validate_nombre(self, name, data):
+        errors = []
+        if not name or name == '':
+            errors.append('El nombre es un campo requerido')
+        if len(name) > 128:
+            errors.append('El nombre no puede ser mayor a 128 caracteres')
+        if len(errors) > 0:
+            data['errors']['nombre'] = errors
+
+    def validate_metodo(self, metodo, data):
+        errors = []
+        try:
+            if not metodo or metodo == '':
+                errors.append('El metodo no puede estar vacio')
+            elif 2 < int(metodo) or int(metodo) < 1:
+                errors.append(
+                    'El metodo seleccionado es invalido (debe ser 1 o 2)')
+        except ValueError:
+            errors.append('El metodo debe ser un numero entero')
+        if len(errors) > 0:
+            data['errors']['metodo'] = errors
+
+    def validate_disparador(self, disparador, data):
+        errors = []
+        try:
+            if not disparador or disparador == '':
+                errors.append('El disparador no puede estar vacio')
+            if 4 < int(disparador) or int(disparador) < 1:
+                errors.append(
+                    'El disparador seleccionado es invalido '
+                    '(debe estar entre 1 y 4)')
+        except ValueError:
+            errors.append('El disparador debe ser un numero entero')
+        if len(errors) > 0:
+            data['errors']['disparador'] = errors
+
+    def validate_formato(self, formato, metodo, data):
+        errors = []
+        try:
+            if metodo == SitioExterno.GET and formato:
+                errors.append(
+                    'Si el método es GET, no debe indicarse formato.')
+            elif metodo == SitioExterno.POST and formato == '':
+                # and \
+                #     (not formato or (4 < formato or formato < 1)):
+                errors.append(
+                        'Si el método es POST, debe '
+                        'seleccionar un formato válido '
+                        '(debe estar entre 1 y 4)')
+        except ValueError:
+            errors.append('El formato debe ser un numero entero')
+        if len(errors) > 0:
+            data['errors']['formato'] = errors
+
+    def validate_objetivo(self, objetivo, disparador, formato, data):
+        errors = []
+        try:
+            if not objetivo:
+                errors.append('Debe indicar un objetivo válido')
+            elif 2 < int(objetivo) or int(objetivo) < 1:
+                errors.append('El objetivo seleccionado es invalido '
+                              '(debe ser 1 o 2)')
+            elif disparador == SitioExterno.SERVER:
+                if objetivo:
+                    errors.append(
+                        'Si el disparador es el servidor, '
+                        'no puede haber un objetivo.')
+            elif formato == SitioExterno.JSON:
+                if objetivo:
+                    errors.append(
+                        'Si el formato es JSON, no puede haber un objetivo.')
+        except ValueError:
+            errors.append('El objetivo debe ser un numero entero')
+        if len(errors) > 0:
+            data['errors']['objetivo'] = errors
+
+    def validate_url(self, url, data):
+        errors = []
+        if url:
+            # Verificar que los placeholders están bien formados
+            # y tienen la forma la forma '{x}' con x digito
+            bien = url.count('{') == url.count('}')
+            if bien:
+                # omito el principio hasta el primer placehodler
+                subs = url.split('{')[1:]
+                # Las subcadenas restantes debe ser de la forma 'x}___'
+                for sub in subs:
+                    end = sub.find('}')
+                    bien = bien and end > 0 and sub[0:end].isdigit()
+                    if not bien:
+                        errors.append('La url tiene un formato inválido')
+            else:
+                errors.append('La url tiene un formato inválido')
+        else:
+            errors.append('La URL es un campo requerido')
+        if len(errors) > 0:
+            data['errors']['url'] = errors
+
+    def post(self, request):
+        try:
+            responseData = {
+                'status': 'SUCCESS',
+                'errors': {},
+                'message': _('Se creo el sitio externo '
+                             'de forma exitosa')}
+            nombre = request.data.get('nombre')
+            url = request.data.get('url')
+            metodo = int(request.data.get('metodo'))
+            # disparador = int(request.data.get('disparador'))
+            # formato = int(request.data.get('formato'))
+            # objetivo = int(request.data.get('objetivo'))
+            # ConfiguracionDePausa.objects.create(
+            #     pausa=pausa, conjunto_de_pausa=conjunto_de_pausa,
+            #     time_to_end_pause=time_to_end_pause)
+            # self.validate_required_fields(request, data)
+            self.validate_nombre(nombre, responseData)
+            self.validate_url(url, responseData)
+            self.validate_metodo(metodo, responseData)
+            # self.validate_disparador(disparador, responseData)
+            # self.validate_formato(formato, metodo, responseData)
+            # self.validate_objetivo(objetivo, disparador, formato, responseData)
+            if len(responseData['errors']) > 0:
+                responseData['status'] = 'ERROR'
+                responseData['message'] = _('Error al hacer la peticion')
+                return Response(
+                    data=responseData, status=status.HTTP_400_BAD_REQUEST)
+            return Response(data=responseData, status=status.HTTP_200_OK)
+        except Exception as e:
+            print(e)
+            responseData['status'] = 'ERROR'
+            responseData['message'] = _('Error al crear el sitio externo')
+            return Response(
+                data=responseData,
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+class SitioExternoUpdate(APIView):
+    permission_classes = (TienePermisoOML, )
+    authentication_classes = (
+        SessionAuthentication, ExpiringTokenAuthentication, )
+    renderer_classes = (JSONRenderer, )
+    http_method_names = ['put']
+
+    def put(self, request, pk):
+        data = {
+            'status': 'SUCCESS',
+            'message': _('Se actualizo el sitio externo '
+                         'de forma exitosa')}
+        try:
+            sitio = SitioExterno.objects.get(pk=pk)
+            sitio.save()
+            return Response(data=data, status=status.HTTP_200_OK)
+        except SitioExterno.DoesNotExist:
+            data['status'] = 'ERROR'
+            data['message'] = _('No existe el sitio externo '
+                                'que se quiere actualizar')
+            return Response(
+                data=data, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        except Exception:
+            data['status'] = 'ERROR'
+            data['message'] = _('Error al actualizar '
+                                'el sitio externo')
+            return Response(
+                data=data, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+class SitioExternoDetalle(APIView):
+    permission_classes = (TienePermisoOML, )
+    authentication_classes = (
+        SessionAuthentication, ExpiringTokenAuthentication, )
+    renderer_classes = (JSONRenderer, )
+    http_method_names = ['get']
+
+    def get(self, request, pk):
+        data = {
+            'status': 'SUCCESS',
+            'message': _('Se obtuvo la informacion del '
+                         'sitio externo de forma exitosa'),
+            'externalSiteDetail': None}
+        try:
+            sitio = SitioExterno.objects.get(pk=pk)
+            data['externalSiteDetail'] = SitioExternoSerializer(sitio).data
+            return Response(data=data, status=status.HTTP_200_OK)
+        except SitioExterno.DoesNotExist:
+            data['status'] = 'ERROR'
+            data['message'] = _('Error al obtener el '
+                                'detalle del sitio externo')
+            return Response(
+                data=data, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+class SitioExternoDelete(APIView):
+    permission_classes = (TienePermisoOML, )
+    authentication_classes = (
+        SessionAuthentication, ExpiringTokenAuthentication, )
+    renderer_classes = (JSONRenderer, )
+    http_method_names = ['delete']
+
+    def delete(self, request, pk):
+        data = {
+            'status': 'SUCCESS',
+            'message': _('Se elimino el sitio externo '
+                         'de forma exitosa')}
+        try:
+            sitio = SitioExterno.objects.get(pk=pk)
+            if sitio.campana_set.exists():
+                data['status'] = 'ERROR'
+                data['message'] = _('No está permitido eliminar un '
+                                    'sitio externo asociado a una campaña')
+                return Response(data=data, status=status.HTTP_400_BAD_REQUEST)
+            else:
+                sitio.delete()
+            return Response(data=data, status=status.HTTP_200_OK)
+        except SitioExterno.DoesNotExist:
+            data['status'] = 'ERROR'
+            data['message'] = _(u'No existe el sitio externo')
+            return Response(
+                data=data, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        except Exception:
+            data['status'] = 'ERROR'
+            data['message'] = _(u'Error al eliminar el sitio externo')
+            return Response(
+                data=data, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+class SitioExternoOcultar(APIView):
+    permission_classes = (TienePermisoOML, )
+    authentication_classes = (
+        SessionAuthentication, ExpiringTokenAuthentication, )
+    renderer_classes = (JSONRenderer, )
+    http_method_names = ['get']
+
+    def get(self, request, pk):
+        data = {
+            'status': 'SUCCESS',
+            'message': _('Se oculto el sitio externo '
+                         'de forma exitosa')}
+        try:
+            sitio = SitioExterno.objects.get(pk=pk)
+            sitio.ocultar()
+            return Response(data=data, status=status.HTTP_200_OK)
+        except SitioExterno.DoesNotExist:
+            data['status'] = 'ERROR'
+            data['message'] = _('Error al ocultar el sitio externo')
+            return Response(
+                data=data, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+class SitioExternoDesocultar(APIView):
+    permission_classes = (TienePermisoOML, )
+    authentication_classes = (
+        SessionAuthentication, ExpiringTokenAuthentication, )
+    renderer_classes = (JSONRenderer, )
+    http_method_names = ['get']
+
+    def get(self, request, pk):
+        data = {
+            'status': 'SUCCESS',
+            'message': _('Se desoculto el sitio externo '
+                         'de forma exitosa')}
+        try:
+            sitio = SitioExterno.objects.get(pk=pk)
+            sitio.desocultar()
+            return Response(data=data, status=status.HTTP_200_OK)
+        except SitioExterno.DoesNotExist:
+            data['status'] = 'ERROR'
+            data['message'] = _('Error al desocultar el sitio externo')
             return Response(
                 data=data, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

@@ -30,7 +30,7 @@ from ominicontacto_app.models import (
     AgenteEnContacto, AgenteProfile, ArchivoDeAudio,
     CalificacionCliente, Campana, ConfiguracionDePausa,
     Contacto, Grupo, ConjuntoDePausa, OpcionCalificacion,
-    Pausa, User, QueueMember)
+    Pausa, SitioExterno, User, QueueMember)
 from auditlog.models import LogEntry
 
 
@@ -367,6 +367,15 @@ class ConjuntoDePausaSerializer(serializers.ModelSerializer):
     class Meta:
         model = ConjuntoDePausa
         fields = ('id', 'nombre')
+
+
+class SitioExternoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = SitioExterno
+        fields = (
+            'id', 'nombre', 'url',
+            'oculto', 'disparador', 'metodo',
+            'formato', 'objetivo')
 
 
 class ConfiguracionDePausaSerializer(serializers.ModelSerializer):

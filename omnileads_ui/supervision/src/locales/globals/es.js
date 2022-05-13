@@ -42,6 +42,7 @@ export default {
     pause_config_info: 'Configuracion de pausa: {name}',
     pause_config_by_set: 'Configuraciones de pausas del conjunto: {set}',
     infinite_pause: 'Pausa infinita',
+    external_site: 'Sitio externo | Sitios externos',
     // -------------
     // -- Actions --
     // -------------

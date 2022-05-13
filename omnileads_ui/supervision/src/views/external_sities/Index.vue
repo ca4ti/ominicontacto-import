@@ -13,23 +13,22 @@
         />
       </template>
     </Toolbar>
-    <GroupsTable
-      :pauseSets="pauseSets"
-      @editGroupEvent="editGroup"
-    ></GroupsTable>
-    <EditGroup
+    <ExternalSitiesTable
+      :externalSities="externalSities"
+    ></ExternalSitiesTable>
+    <!-- <EditGroup
       :showModal="showModalEdit"
       :group="group"
       @handleModal="handleEditModal"
       @initDataEvent="initData"
-    ></EditGroup>
+    ></EditGroup> -->
   </div>
 </template>
 
 <script>
 import { mapActions, mapState } from 'vuex';
-import GroupsTable from '@/components/pause_sets/GroupsTable';
-import EditGroup from '@/components/pause_sets/forms/EditGroup';
+import ExternalSitiesTable from '@/components/external_sities/ExternalSitiesTable';
+// import EditGroup from '@/components/pause_sets/forms/EditGroup';
 
 export default {
     data () {
@@ -39,31 +38,29 @@ export default {
         };
     },
     components: {
-        GroupsTable,
-        EditGroup
+        ExternalSitiesTable
     },
     async created () {
         await this.initData();
     },
     methods: {
-        editGroup (group) {
-            this.group = group;
-            this.showModalEdit = true;
-        },
-        newPauseGroup () {
-            this.$router.push({ name: 'pause_sets_new' });
-        },
-        handleEditModal (show) {
-            this.showModalEdit = show;
-        },
+        // editGroup (group) {
+        //     this.group = group;
+        //     this.showModalEdit = true;
+        // },
+        // newPauseGroup () {
+        //     this.$router.push({ name: 'pause_sets_new' });
+        // },
+        // handleEditModal (show) {
+        //     this.showModalEdit = show;
+        // },
         async initData () {
-            await this.initPauseSets();
-            await this.initPauses();
+            await this.initExternalSities();
         },
-        ...mapActions(['initPauseSets', 'initPauses'])
+        ...mapActions(['initExternalSities'])
     },
     computed: {
-        ...mapState(['pauseSets', 'pauses'])
+        ...mapState(['externalSities'])
     }
 };
 </script>

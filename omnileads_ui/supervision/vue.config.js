@@ -11,7 +11,7 @@ function getPageConfig (pageName) {
     return {
         entry: 'src/main.js',
         template: `public/${pageName}.html`,
-        filename: pageName,
+        filename: `${pageName}.html`,
         title: pageName,
         chunks: ['chunk-vendors', 'chunk-common', pageName]
     };

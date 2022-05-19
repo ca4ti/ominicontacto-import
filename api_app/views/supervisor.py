@@ -1462,9 +1462,9 @@ class SitioExternoCreate(APIView):
                         'Si el método es GET, no debe indicarse formato.')
                 elif int(metodo) == SitioExterno.POST and formato == '':
                     errors.append(
-                            'Si el método es POST, debe '
-                            'seleccionar un formato válido '
-                            '(debe estar entre 1 y 4)')
+                        'Si el método es POST, debe '
+                        'seleccionar un formato válido '
+                        '(debe estar entre 1 y 4)')
         except ValueError:
             errors.append('El formato debe ser un numero entero')
         if len(errors) > 0:
@@ -1611,9 +1611,9 @@ class SitioExternoUpdate(APIView):
                         'Si el método es GET, no debe indicarse formato.')
                 elif int(metodo) == SitioExterno.POST and formato == 0:
                     errors.append(
-                            'Si el método es POST, debe '
-                            'seleccionar un formato válido '
-                            '(debe estar entre 1 y 4)')
+                        'Si el método es POST, debe '
+                        'seleccionar un formato válido '
+                        '(debe estar entre 1 y 4)')
         except ValueError:
             errors.append('El formato debe ser un numero entero')
         if len(errors) > 0:

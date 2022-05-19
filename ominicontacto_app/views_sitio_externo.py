@@ -21,10 +21,10 @@
 nombre y una url externa para crm externo en el momento de crear una campa se selecciona
 el sitio externo el cual va abrirse en una pestaña
 """
-from django.views.generic import ListView
+from django.views.generic import TemplateView
 
 
-class SitioExternoListView(ListView):
+class SitioExternoListView(TemplateView):
     """
     Esta vista es para generar el listado de sitios externos.
     """

@@ -1399,7 +1399,7 @@ class SitioExternoList(APIView):
                          'externos de forma exitosa'),
             'externalSities': []}
         try:
-            sitios = SitioExterno.objects.filter(oculto=False)
+            sitios = SitioExterno.objects.all().order_by('id')
             data['externalSities'] = [
                 SitioExternoSerializer(sitio).data for sitio in sitios]
             return Response(data=data, status=status.HTTP_200_OK)
@@ -1419,7 +1419,7 @@ class SitioExternoCreate(APIView):
 
     def validate_nombre(self, name, data):
         errors = []
-        if not name or name == '':
+        if name == '':
             errors.append('El nombre es un campo requerido')
         if len(name) > 128:
             errors.append('El nombre no puede ser mayor a 128 caracteres')
@@ -1429,7 +1429,7 @@ class SitioExternoCreate(APIView):
     def validate_metodo(self, metodo, data):
         errors = []
         try:
-            if not metodo or metodo == '':
+            if metodo == '':
                 errors.append('El metodo no puede estar vacio')
             elif 2 < int(metodo) or int(metodo) < 1:
                 errors.append(
@@ -1442,7 +1442,7 @@ class SitioExternoCreate(APIView):
     def validate_disparador(self, disparador, data):
         errors = []
         try:
-            if not disparador or disparador == '':
+            if disparador == '':
                 errors.append('El disparador no puede estar vacio')
             if 4 < int(disparador) or int(disparador) < 1:
                 errors.append(
@@ -1456,16 +1456,15 @@ class SitioExternoCreate(APIView):
     def validate_formato(self, formato, metodo, data):
         errors = []
         try:
-            if metodo == SitioExterno.GET and formato:
-                errors.append(
-                    'Si el método es GET, no debe indicarse formato.')
-            elif metodo == SitioExterno.POST and formato == '':
-                # and \
-                #     (not formato or (4 < formato or formato < 1)):
-                errors.append(
-                        'Si el método es POST, debe '
-                        'seleccionar un formato válido '
-                        '(debe estar entre 1 y 4)')
+            if metodo != '':
+                if int(metodo) == SitioExterno.GET and formato != '':
+                    errors.append(
+                        'Si el método es GET, no debe indicarse formato.')
+                elif int(metodo) == SitioExterno.POST and formato == '':
+                    errors.append(
+                            'Si el método es POST, debe '
+                            'seleccionar un formato válido '
+                            '(debe estar entre 1 y 4)')
         except ValueError:
             errors.append('El formato debe ser un numero entero')
         if len(errors) > 0:
@@ -1474,20 +1473,24 @@ class SitioExternoCreate(APIView):
     def validate_objetivo(self, objetivo, disparador, formato, data):
         errors = []
         try:
-            if not objetivo:
-                errors.append('Debe indicar un objetivo válido')
-            elif 2 < int(objetivo) or int(objetivo) < 1:
-                errors.append('El objetivo seleccionado es invalido '
-                              '(debe ser 1 o 2)')
-            elif disparador == SitioExterno.SERVER:
-                if objetivo:
-                    errors.append(
-                        'Si el disparador es el servidor, '
-                        'no puede haber un objetivo.')
-            elif formato == SitioExterno.JSON:
-                if objetivo:
-                    errors.append(
-                        'Si el formato es JSON, no puede haber un objetivo.')
+            if formato != '':
+                if int(formato) == SitioExterno.JSON:
+                    if objetivo != '':
+                        errors.append(
+                            'Si el formato es JSON, no puede '
+                            'haber un objetivo.')
+            if disparador != '':
+                if int(disparador) == SitioExterno.SERVER:
+                    if objetivo != '':
+                        errors.append(
+                            'Si el disparador es el servidor, '
+                            'no puede haber un objetivo.')
+                else:
+                    if objetivo == '':
+                        errors.append('Debe indicar un objetivo válido')
+                    elif 2 < int(objetivo) or int(objetivo) < 1:
+                        errors.append('El objetivo seleccionado es invalido '
+                                      '(debe ser 1 o 2)')
         except ValueError:
             errors.append('El objetivo debe ser un numero entero')
         if len(errors) > 0:
@@ -1524,25 +1527,28 @@ class SitioExternoCreate(APIView):
                              'de forma exitosa')}
             nombre = request.data.get('nombre')
             url = request.data.get('url')
-            metodo = int(request.data.get('metodo'))
-            # disparador = int(request.data.get('disparador'))
-            # formato = int(request.data.get('formato'))
-            # objetivo = int(request.data.get('objetivo'))
-            # ConfiguracionDePausa.objects.create(
-            #     pausa=pausa, conjunto_de_pausa=conjunto_de_pausa,
-            #     time_to_end_pause=time_to_end_pause)
-            # self.validate_required_fields(request, data)
+            metodo = request.data.get('metodo')
+            disparador = request.data.get('disparador')
+            formato = request.data.get('formato')
+            objetivo = request.data.get('objetivo')
             self.validate_nombre(nombre, responseData)
             self.validate_url(url, responseData)
             self.validate_metodo(metodo, responseData)
-            # self.validate_disparador(disparador, responseData)
-            # self.validate_formato(formato, metodo, responseData)
-            # self.validate_objetivo(objetivo, disparador, formato, responseData)
+            self.validate_disparador(disparador, responseData)
+            self.validate_formato(formato, metodo, responseData)
+            self.validate_objetivo(objetivo, disparador, formato, responseData)
             if len(responseData['errors']) > 0:
                 responseData['status'] = 'ERROR'
                 responseData['message'] = _('Error al hacer la peticion')
                 return Response(
                     data=responseData, status=status.HTTP_400_BAD_REQUEST)
+            disparador = 3 if disparador in ['', None] else disparador
+            metodo = 1 if metodo in ['', None] else metodo
+            objetivo = 1 if objetivo in ['', None] else objetivo
+            formato = 1 if formato in ['', None] else formato
+            SitioExterno.objects.create(
+                nombre=nombre, url=url, disparador=disparador,
+                metodo=metodo, formato=formato, objetivo=objetivo)
             return Response(data=responseData, status=status.HTTP_200_OK)
         except Exception as e:
             print(e)
@@ -1560,13 +1566,142 @@ class SitioExternoUpdate(APIView):
     renderer_classes = (JSONRenderer, )
     http_method_names = ['put']
 
+    def validate_nombre(self, name, data):
+        errors = []
+        if name == '':
+            errors.append('El nombre es un campo requerido')
+        if len(name) > 128:
+            errors.append('El nombre no puede ser mayor a 128 caracteres')
+        if len(errors) > 0:
+            data['errors']['nombre'] = errors
+
+    def validate_metodo(self, metodo, data):
+        errors = []
+        try:
+            if not metodo or metodo == 0:
+                errors.append('El metodo no puede estar vacio')
+            elif 2 < int(metodo) or int(metodo) < 1:
+                errors.append(
+                    'El metodo seleccionado es invalido (debe ser 1 o 2)')
+        except ValueError:
+            errors.append('El metodo debe ser un numero entero')
+        if len(errors) > 0:
+            data['errors']['metodo'] = errors
+
+    def validate_disparador(self, disparador, data):
+        errors = []
+        try:
+            if not disparador or disparador == 0:
+                errors.append('El disparador no puede estar vacio')
+            if 4 < int(disparador) or int(disparador) < 1:
+                errors.append(
+                    'El disparador seleccionado es invalido '
+                    '(debe estar entre 1 y 4)')
+        except ValueError:
+            errors.append('El disparador debe ser un numero entero')
+        if len(errors) > 0:
+            data['errors']['disparador'] = errors
+
+    def validate_formato(self, formato, metodo, data):
+        errors = []
+        try:
+            if metodo != 0:
+                if int(metodo) == SitioExterno.GET and formato != 0:
+                    errors.append(
+                        'Si el método es GET, no debe indicarse formato.')
+                elif int(metodo) == SitioExterno.POST and formato == 0:
+                    errors.append(
+                            'Si el método es POST, debe '
+                            'seleccionar un formato válido '
+                            '(debe estar entre 1 y 4)')
+        except ValueError:
+            errors.append('El formato debe ser un numero entero')
+        if len(errors) > 0:
+            data['errors']['formato'] = errors
+
+    def validate_objetivo(self, objetivo, disparador, formato, data):
+        errors = []
+        try:
+            if formato != 0:
+                if int(formato) == SitioExterno.JSON:
+                    if objetivo != 0:
+                        errors.append(
+                            'Si el formato es JSON, no puede '
+                            'haber un objetivo.')
+            if disparador != 0:
+                if int(disparador) == SitioExterno.SERVER:
+                    if objetivo != 0:
+                        errors.append(
+                            'Si el disparador es el servidor, '
+                            'no puede haber un objetivo.')
+                else:
+                    if objetivo == 0:
+                        errors.append('Debe indicar un objetivo válido')
+                    elif 2 < int(objetivo) or int(objetivo) < 1:
+                        errors.append('El objetivo seleccionado es invalido '
+                                      '(debe ser 1 o 2)')
+        except ValueError:
+            errors.append('El objetivo debe ser un numero entero')
+        if len(errors) > 0:
+            data['errors']['objetivo'] = errors
+
+    def validate_url(self, url, data):
+        errors = []
+        if url:
+            # Verificar que los placeholders están bien formados
+            # y tienen la forma la forma '{x}' con x digito
+            bien = url.count('{') == url.count('}')
+            if bien:
+                # omito el principio hasta el primer placehodler
+                subs = url.split('{')[1:]
+                # Las subcadenas restantes debe ser de la forma 'x}___'
+                for sub in subs:
+                    end = sub.find('}')
+                    bien = bien and end > 0 and sub[0:end].isdigit()
+                    if not bien:
+                        errors.append('La url tiene un formato inválido')
+            else:
+                errors.append('La url tiene un formato inválido')
+        else:
+            errors.append('La URL es un campo requerido')
+        if len(errors) > 0:
+            data['errors']['url'] = errors
+
     def put(self, request, pk):
         data = {
             'status': 'SUCCESS',
+            'errors': {},
             'message': _('Se actualizo el sitio externo '
                          'de forma exitosa')}
         try:
             sitio = SitioExterno.objects.get(pk=pk)
+            nombre = request.data.get('nombre')
+            url = request.data.get('url')
+            metodo = request.data.get('metodo')
+            disparador = request.data.get('disparador')
+            formato = request.data.get('formato')
+            objetivo = request.data.get('objetivo')
+            self.validate_nombre(nombre, data)
+            self.validate_url(url, data)
+            self.validate_metodo(metodo, data)
+            self.validate_disparador(disparador, data)
+            self.validate_formato(formato, metodo, data)
+            self.validate_objetivo(objetivo, disparador, formato, data)
+            if len(data['errors']) > 0:
+                data['status'] = 'ERROR'
+                data['message'] = _('Error al hacer la peticion')
+                return Response(
+                    data=data, status=status.HTTP_400_BAD_REQUEST)
+            disparador = 3 if disparador in ['', None] else disparador
+            metodo = 1 if metodo in ['', None] else metodo
+            objetivo = 1 if objetivo in ['', None] else objetivo
+            formato = 1 if formato in ['', None] else formato
+            sitio.nombre = nombre
+            sitio.url = url
+            sitio.metodo = metodo
+            sitio.disparador = disparador
+            sitio.formato = formato
+            sitio.objetivo = objetivo
             sitio.save()
             return Response(data=data, status=status.HTTP_200_OK)
         except SitioExterno.DoesNotExist:
@@ -1626,7 +1761,7 @@ class SitioExternoDelete(APIView):
                 data['status'] = 'ERROR'
                 data['message'] = _('No está permitido eliminar un '
                                     'sitio externo asociado a una campaña')
-                return Response(data=data, status=status.HTTP_400_BAD_REQUEST)
+                return Response(data=data, status=status.HTTP_200_OK)
             else:
                 sitio.delete()
             return Response(data=data, status=status.HTTP_200_OK)

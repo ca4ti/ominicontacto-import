@@ -15,5 +15,15 @@ export default {
         pause_type: 'نوع مکث',
         set: 'تنظیم',
         time_to_end_pause: 'زمان پایان دادن به مکث'
+    },
+    external_site: {
+        id: 'برو',
+        name: 'نام',
+        url: 'URL',
+        method: 'روش',
+        format: 'قالب',
+        objective: 'هدف',
+        trigger: 'ماشه',
+        status: 'شرایط. شرط'
     }
 };

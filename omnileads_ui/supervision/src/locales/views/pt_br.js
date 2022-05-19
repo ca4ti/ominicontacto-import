@@ -26,5 +26,12 @@ export default {
     pause_setting: {
         max_time_allowed: 'O tempo máximo de pausa é de 8 horas (28800 segundos)',
         min_time_allowed: 'Tempo infinito, significa que você nunca sairá da pausa (0 segundos)'
+    },
+    external_sities: {
+        list_title: 'Sites Externos',
+        show_hiddens: 'mostrar escondido',
+        remove_hiddens: 'remover oculto',
+        hide: 'Disfarce',
+        show: 'mostrar'
     }
 };

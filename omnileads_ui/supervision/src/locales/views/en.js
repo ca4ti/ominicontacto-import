@@ -26,5 +26,12 @@ export default {
     pause_setting: {
         max_time_allowed: 'The maximum pause time is 8 hours (28800 seconds)',
         min_time_allowed: 'Infinite time, it means that you will never leave the pause (0 seconds)'
+    },
+    external_sities: {
+        list_title: 'External Sites',
+        show_hiddens: 'Show hidden',
+        remove_hiddens: 'Remove hidden',
+        hide: 'Hide',
+        show: 'Unhide'
     }
 };

@@ -7,7 +7,7 @@ function getCsfrToken (cookie) {
     }
 }
 
-function getPageConfig(pageName) {
+function getPageConfig (pageName) {
     return {
         entry: 'src/main.js',
         template: `public/${pageName}.html`,
@@ -20,11 +20,11 @@ function getPageConfig(pageName) {
 module.exports = {
     publicPath: '/static/omnileads-ui-supervision/',
     pages: {
-        'supervision_dashboard': getPageConfig('supervision_dashboard'),
-        'audit_supervisor': getPageConfig('audit_supervisor'),
-        'add_agents_to_campaign': getPageConfig('add_agents_to_campaign'),
-        'pause_sets': getPageConfig('pause_sets'),
-        'external_sities': getPageConfig('external_sities')
+        supervision_dashboard: getPageConfig('supervision_dashboard'),
+        audit_supervisor: getPageConfig('audit_supervisor'),
+        add_agents_to_campaign: getPageConfig('add_agents_to_campaign'),
+        pause_sets: getPageConfig('pause_sets'),
+        external_sities: getPageConfig('external_sities')
     },
     devServer: {
         proxy: {

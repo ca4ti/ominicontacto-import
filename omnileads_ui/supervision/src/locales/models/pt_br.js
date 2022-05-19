@@ -15,5 +15,15 @@ export default {
         pause_type: 'Tipo de pausa',
         set: 'Conjunto',
         time_to_end_pause: 'Tiempo para terminar pausa'
+    },
+    external_site: {
+        id: 'ID',
+        name: 'Nome',
+        url: 'URL',
+        method: 'Método',
+        format: 'Formato',
+        objective: 'Meta',
+        trigger: 'Acionar',
+        status: 'Doença'
     }
 };

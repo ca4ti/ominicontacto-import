@@ -28,6 +28,10 @@ export default {
         min_time_allowed: 'Tiempo infinito, quiere decir que nunca saldras de la pausa (0 segundos)'
     },
     external_sities: {
-        list_title: 'Sitios Externos'
+        list_title: 'Sitios Externos',
+        show_hiddens: 'Mostrar ocultos',
+        remove_hiddens: 'Quitar ocultos',
+        hide: 'Ocultar',
+        show: 'Desocultar'
     }
 };

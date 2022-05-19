@@ -21,8 +21,9 @@ export default {
         name: 'Nombre',
         url: 'Url',
         method: 'Metodo',
-        formate: 'Formato',
+        format: 'Formato',
         objective: 'Objetivo',
         trigger: 'Disparador',
+        status: 'Estado'
     }
 };

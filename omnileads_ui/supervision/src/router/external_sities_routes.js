@@ -4,7 +4,7 @@ import Edit from '@/views/external_sities/Edit';
 
 export default [
     {
-        path: '/external_sities',
+        path: '/external_sities.html',
         name: 'external_sities',
         component: Index
     },

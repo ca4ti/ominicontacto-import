@@ -242,11 +242,6 @@ class OminicontactoAppConfig(AppConfig):
             })
         #  Sitios Externos
         sitios_externos = []
-        if 'sitio_externo_create' in permissions:
-            sitios_externos.append({
-                'label': _('Nuevo sitio'),
-                'url': reverse('sitio_externo_create')
-            })
         if 'sitio_externo_list' in permissions:
             sitios_externos.append({
                 'label': _('Listado de sitios'),
@@ -709,8 +704,6 @@ class OminicontactoAppConfig(AppConfig):
              'roles': ['Administrador', ]},
             {'nombre': 'sitio_externo_list',
              'roles': ['Administrador', ]},
-            {'nombre': 'sitio_externo_create',
-             'roles': ['Administrador', ]},
             {'nombre': 'oculta_sitio_externo',
              'roles': ['Administrador', ]},
             {'nombre': 'desoculta_sitio_externo',
@@ -1170,8 +1163,6 @@ class OminicontactoAppConfig(AppConfig):
             {'descripcion': _('Modificar un Sistema Externo'), 'version': '1.7.0'},
         'sitio_externo_list':
             {'descripcion': _('Ver lista de Sitios Externos'), 'version': '1.7.0'},
-        'sitio_externo_create':
-            {'descripcion': _('Crear un Sitio Externo'), 'version': '1.7.0'},
         'oculta_sitio_externo':
             {'descripcion': _('Ocultar un Sitio Externo'), 'version': '1.7.0'},
         'desoculta_sitio_externo':

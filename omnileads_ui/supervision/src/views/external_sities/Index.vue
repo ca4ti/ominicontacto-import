@@ -2,58 +2,59 @@
   <div class="card">
     <Toolbar class="p-mb-4">
       <template #start>
-        <h1>{{ $t("views.pause_sets.title") }}</h1>
+        <h1>{{ $t("views.external_sities.list_title") }}</h1>
       </template>
       <template #end>
         <Button
           :label="$tc('globals.new')"
           icon="pi pi-plus"
           class="p-button-success"
-          @click="newPauseGroup"
+          @click="newExternalSite"
         />
       </template>
     </Toolbar>
     <ExternalSitiesTable
       :externalSities="externalSities"
+      @showDetail="showDetail"
     ></ExternalSitiesTable>
-    <!-- <EditGroup
-      :showModal="showModalEdit"
-      :group="group"
-      @handleModal="handleEditModal"
-      @initDataEvent="initData"
-    ></EditGroup> -->
+    <ModalDetail
+      :showModal="showModalDetail"
+      :externalSite="externalSite"
+      @handleModal="handleModal"
+    />
   </div>
 </template>
 
 <script>
 import { mapActions, mapState } from 'vuex';
 import ExternalSitiesTable from '@/components/external_sities/ExternalSitiesTable';
-// import EditGroup from '@/components/pause_sets/forms/EditGroup';
+import ModalDetail from '@/components/external_sities/ModalDetail';
 
 export default {
     data () {
         return {
-            showModalEdit: false,
-            group: {}
+            showModalDetail: false,
+            externalSite: null
         };
     },
     components: {
-        ExternalSitiesTable
+        ExternalSitiesTable,
+        ModalDetail
     },
     async created () {
         await this.initData();
     },
     methods: {
-        // editGroup (group) {
-        //     this.group = group;
-        //     this.showModalEdit = true;
-        // },
-        // newPauseGroup () {
-        //     this.$router.push({ name: 'pause_sets_new' });
-        // },
-        // handleEditModal (show) {
-        //     this.showModalEdit = show;
-        // },
+        showDetail (data) {
+            this.externalSite = data;
+            this.showModalDetail = true;
+        },
+        handleModal (show) {
+            this.showModalDetail = show;
+        },
+        newExternalSite () {
+            this.$router.push({ name: 'external_sities_new' });
+        },
         async initData () {
             await this.initExternalSities();
         },

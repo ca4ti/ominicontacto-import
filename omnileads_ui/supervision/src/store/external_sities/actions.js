@@ -11,21 +11,21 @@ export default {
         const { externalSiteDetail } = await externalSiteService.externalSiteDetail(id);
         commit('initExternalSiteDetail', externalSiteDetail);
     },
-    async deleteExternalSite (id) {
+    async deleteExternalSite ({ commit }, id) {
         const { status } = await externalSiteService.deleteExternalSite(id);
         if (status === 'SUCCESS') {
             return true;
         }
         return false;
     },
-    async hideExternalSite (id) {
+    async hideExternalSite ({ commit }, id) {
         const { status } = await externalSiteService.hideExternalSite(id);
         if (status === 'SUCCESS') {
             return true;
         }
         return false;
     },
-    async showExternalSite (id) {
+    async showExternalSite ({ commit }, id) {
         const { status } = await externalSiteService.showExternalSite(id);
         if (status === 'SUCCESS') {
             return true;

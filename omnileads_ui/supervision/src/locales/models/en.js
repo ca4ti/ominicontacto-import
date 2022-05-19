@@ -15,5 +15,15 @@ export default {
         pause_type: 'Pause type',
         set: 'Set',
         time_to_end_pause: 'Time to end pause'
+    },
+    external_site: {
+        id: 'ID',
+        name: 'Name',
+        url: 'Url',
+        method: 'Method',
+        format: 'Format',
+        objective: 'Objective',
+        trigger: 'Trigger',
+        status: 'Status'
     }
 };

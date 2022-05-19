@@ -23,7 +23,7 @@ export default class ExternalSiteService extends BaseService {
         }
     }
 
-    async externalSiteHide (id) {
+    async hideExternalSite (id) {
         try {
             const resp = await fetch(
                 apiUrls.ExternalSiteHide(id), this.payload);
@@ -34,7 +34,7 @@ export default class ExternalSiteService extends BaseService {
         }
     }
 
-    async externalSiteShow (id) {
+    async showExternalSite (id) {
         try {
             const resp = await fetch(
                 apiUrls.ExternalSiteShow(id), this.payload);

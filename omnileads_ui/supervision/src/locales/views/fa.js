@@ -26,5 +26,12 @@ export default {
     pause_setting: {
         max_time_allowed: 'حداکثر زمان مکث 8 ساعت (28800 ثانیه) است.',
         min_time_allowed: 'زمان بی نهایت به این معنی است که هرگز مکث را ترک نخواهید کرد (0 ثانیه)'
+    },
+    external_sities: {
+        list_title: 'سایت های خارجی',
+        show_hiddens: 'پنهان نشان دادن',
+        remove_hiddens: 'حذف پنهان',
+        hide: 'مبدل کردن',
+        show: 'پنهان کردن'
     }
 };

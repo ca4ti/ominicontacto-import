@@ -1,5 +1,6 @@
 import Index from '@/views/external_sities/Index';
 import New from '@/views/external_sities/New';
+import Edit from '@/views/external_sities/Edit';
 
 export default [
     {
@@ -13,8 +14,8 @@ export default [
         component: New
     },
     {
-        path: '/external_sities/update',
+        path: '/external_sities/:id/update',
         name: 'external_sities_update',
-        component: New
+        component: Edit
     }
 ];

@@ -1,7 +1,7 @@
 <template>
   <div class="card">
     <DataTable
-      :value="externalSitiesFilter"
+      :value="scores"
       class="p-datatable-sm"
       showGridlines
       :scrollable="true"
@@ -55,23 +55,9 @@
       <Column :header="$tc('globals.option', 2)" :exportable="false">
         <template #body="slotProps">
           <Button
-            icon="pi pi-eye"
-            v-if="slotProps.data.oculto == true"
-            class="p-button-success p-ml-2"
-            @click="show(slotProps.data.id)"
-            v-tooltip.top="$t('views.external_sities.show')"
-          />
-          <Button
-            icon="pi pi-eye-slash"
-            v-if="slotProps.data.oculto == false"
-            class="p-button-secondary p-ml-2"
-            @click="hide(slotProps.data.id)"
-            v-tooltip.top="$t('views.external_sities.hide')"
-          />
-          <Button
             icon="pi pi-pencil"
             class="p-button-warning p-ml-2"
-            @click="toEditExternalSite(slotProps.data)"
+            @click="edit(slotProps.data)"
             v-tooltip.top="$t('globals.edit')"
           />
           <Button
@@ -79,12 +65,6 @@
             class="p-button-danger p-ml-2"
             @click="remove(slotProps.data.id)"
             v-tooltip.top="$t('globals.delete')"
-          />
-          <Button
-            icon="pi pi-info-circle"
-            class="p-button-info p-ml-2"
-            @click="showExternalSiteDetail(slotProps.data)"
-            v-tooltip.top="$t('globals.help')"
           />
         </template>
       </Column>
@@ -121,12 +101,10 @@ export default {
                 global: { value: null, matchMode: FilterMatchMode.CONTAINS }
             };
         },
-        toEditScore (externalSite) {
-            this.$router.push({
-                name: 'external_sities_update',
-                params: { id: externalSite.id },
-                props: { externalSite }
-            });
+        edit (score) {
+            this.$emit(
+                'handleModalEvent',
+                { showModal: true, toCreate: false, score });
         },
         async remove (id) {
             this.$swal({
@@ -186,15 +164,13 @@ export default {
             });
         },
         ...mapActions([
-            'deleteExternalSite',
-            'initExternalSities'
+            'deleteScore',
+            'initScores'
         ])
     },
     watch: {
-        externalSities: {
-            handler () {
-                this.initDataTable();
-            },
+        scores: {
+            handler () {},
             deep: true,
             immediate: true
         }

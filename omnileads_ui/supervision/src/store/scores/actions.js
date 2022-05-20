@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import ScoreService from '@/services/ScoreService';
+import ScoreService from '@/services/scoreService';
 const scoreService = new ScoreService();
 
 export default {

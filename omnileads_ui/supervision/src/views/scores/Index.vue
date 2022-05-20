@@ -9,59 +9,53 @@
           :label="$tc('globals.new')"
           icon="pi pi-plus"
           class="p-button-success"
-          @click="newExternalSite"
+          @click="newScore"
         />
       </template>
     </Toolbar>
-    <ExternalSitiesTable
-      :externalSities="externalSities"
-      @showDetail="showDetail"
-    ></ExternalSitiesTable>
-    <ModalDetail
-      :showModal="showModalDetail"
-      :externalSite="externalSite"
-      @handleModal="handleModal"
+    <ListTable
+      :scores="scores"
+      @handleModalEvent='handleModal'
     />
+    <Modal />
   </div>
 </template>
 
 <script>
 import { mapActions, mapState } from 'vuex';
-import ExternalSitiesTable from '@/components/external_sities/ExternalSitiesTable';
-import ModalDetail from '@/components/external_sities/ModalDetail';
+import ListTable from '@/components/scores/ListTable';
+import Modal from '@/components/scores/Modal';
 
 export default {
     data () {
         return {
-            showModalDetail: false,
-            externalSite: null
+            showModal: false,
+            score: null
         };
     },
     components: {
-        ExternalSitiesTable,
-        ModalDetail
+        ListTable,
+        Modal
     },
     async created () {
         await this.initData();
     },
     methods: {
-        showDetail (data) {
-            this.externalSite = data;
-            this.showModalDetail = true;
+        handleModal ({ showModal, toCreate, score }) {
+            console.log('INDEX - handleModal');
+            console.log(showModal, toCreate, score);
+            this.showModal = showModal;
         },
-        handleModal (show) {
-            this.showModalDetail = show;
-        },
-        newExternalSite () {
-            this.$router.push({ name: 'external_sities_new' });
+        newScore () {
+            this.showModal = true;
         },
         async initData () {
-            await this.initExternalSities();
+            await this.initScores();
         },
-        ...mapActions(['initExternalSities'])
+        ...mapActions(['initScores'])
     },
     computed: {
-        ...mapState(['externalSities'])
+        ...mapState(['scores'])
     }
 };
 </script>

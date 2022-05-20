@@ -4,6 +4,7 @@ import AuditSupervisor from '../views/AuditSupervisor';
 import AddAgentsToCampaign from '../views/AddAgentsToCampaign';
 import PauseSetRoutes from './pause_sets_routes';
 import ExternalSitieRoutes from './external_sities_routes';
+import ScoreRoutes from './scores_routes';
 
 const routes = [
     {
@@ -22,11 +23,12 @@ const routes = [
         component: AddAgentsToCampaign
     },
     ...PauseSetRoutes,
-    ...ExternalSitieRoutes
+    ...ExternalSitieRoutes,
+    ...ScoreRoutes
 ];
 
 const router = createRouter({
-    history: createWebHistory('/static/omnileads-ui-supervision'),
+    history: createWebHistory('/'),
     routes
 });
 

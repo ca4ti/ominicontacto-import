@@ -167,6 +167,14 @@ class ApiAppConfig(AppConfig):
              'roles': ['Administrador', 'Gerente', 'Supervisor']},
             {'nombre': 'api_external_site_show',
              'roles': ['Administrador', 'Gerente', 'Supervisor']},
+            {'nombre': 'api_scores_list',
+             'roles': ['Administrador', 'Gerente', 'Supervisor']},
+            {'nombre': 'api_score_create',
+             'roles': ['Administrador', 'Gerente', 'Supervisor']},
+            {'nombre': 'api_score_update',
+             'roles': ['Administrador', 'Gerente', 'Supervisor']},
+            {'nombre': 'api_score_delete',
+             'roles': ['Administrador', 'Gerente', 'Supervisor']},
         ]
 
     informacion_de_permisos = {
@@ -357,5 +365,17 @@ class ApiAppConfig(AppConfig):
              'version': '1.23.0'},
         'api_external_site_show':
             {'descripcion': _('Desoculta un sitio externo'),
+             'version': '1.23.0'},
+        'api_scores_list':
+            {'descripcion': _('Lista las calificaciones'),
+             'version': '1.23.0'},
+        'api_score_create':
+            {'descripcion': _('Crea una calificacion'),
+             'version': '1.23.0'},
+        'api_score_update':
+            {'descripcion': _('Actualiza una calificacion'),
+             'version': '1.23.0'},
+        'api_score_delete':
+            {'descripcion': _('Elimina una calificacion'),
              'version': '1.23.0'},
     }

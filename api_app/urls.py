@@ -30,7 +30,7 @@ from api_app.views.administrador import (
     AgentesActivosGrupoViewSet, CrearRolView, EliminarRolView, ActualizarPermisosDeRolView,
     SubirBaseContactosView, EnviarKeyRegistro)
 from api_app.views.supervisor import (
-    SitioExternoCreate, SitioExternoDelete, SitioExternoDesocultar,
+    CalificacionCreate, CalificacionDelete, CalificacionList, CalificacionUpdate, SitioExternoCreate, SitioExternoDelete, SitioExternoDesocultar,
     SitioExternoDetalle, SitioExternoList, SitioExternoOcultar,
     SitioExternoUpdate, SupervisorCampanasActivasViewSet, AgentesStatusAPIView,
     StatusCampanasSalientesView, InteraccionDeSupervisorSobreAgenteView,
@@ -229,6 +229,21 @@ urlpatterns = [
     url(r'api/v1/external_sities/(?P<pk>\d+)/show/$',
         SitioExternoDesocultar.as_view(),
         name='api_external_site_show'),
+    # =========================
+    # Calificaciones
+    # =========================
+    url(r'api/v1/scores/$',
+        CalificacionList.as_view(),
+        name='api_scores_list'),
+    url(r'api/v1/scores/create/$',
+        CalificacionCreate.as_view(),
+        name='api_score_create'),
+    url(r'api/v1/scores/(?P<pk>\d+)/update/$',
+        CalificacionUpdate.as_view(),
+        name='api_score_update'),
+    url(r'api/v1/scores/(?P<pk>\d+)/delete/$',
+        CalificacionDelete.as_view(),
+        name='api_score_delete'),
     # ###########     AGENTE      ############ #
     url(r'^api/v1/campaign/(?P<pk_campana>\d+)/contacts/$',
         API_ObtenerContactosCampanaView.as_view(), name='api_contactos_campana'),

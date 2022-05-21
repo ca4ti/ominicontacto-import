@@ -54,11 +54,11 @@ from api_app.serializers import (
     CampanaSerializer, AuditSupervisorSerializer,
     AgenteDeCampanaSerializer, AgenteActivoSerializer,
     ConfiguracionDePausaSerializer, ConjuntoDePausaSerializer,
-    GrupoSerializer, PausaSerializer, SitioExternoSerializer)
+    GrupoSerializer, NombreCalificacionSerializer, PausaSerializer, SitioExternoSerializer)
 
 from ominicontacto_app.models import (
     Campana, CalificacionCliente, ConfiguracionDePausa,
-    ConjuntoDePausa, Pausa, QueueMember, Grupo,
+    ConjuntoDePausa, NombreCalificacion, Pausa, QueueMember, Grupo,
     AgenteProfile, AgendaContacto, AgenteEnContacto, SitioExterno)
 from ominicontacto_app.services.asterisk.supervisor_activity import (
     SupervisorActivityAmiManager)
@@ -1819,5 +1819,159 @@ class SitioExternoDesocultar(APIView):
         except SitioExterno.DoesNotExist:
             data['status'] = 'ERROR'
             data['message'] = _('Error al desocultar el sitio externo')
+            return Response(
+                data=data, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+class CalificacionList(APIView):
+    permission_classes = (TienePermisoOML, )
+    authentication_classes = (
+        SessionAuthentication, ExpiringTokenAuthentication, )
+    renderer_classes = (JSONRenderer, )
+    http_method_names = ['get']
+
+    def get(self, request):
+        data = {
+            'status': 'SUCCESS',
+            'message': _('Se obtuvieron las calificaciones '
+                         'de forma exitosa'),
+            'scores': []}
+        try:
+            calificaciones = NombreCalificacion.objects.exclude(
+                nombre=settings.CALIFICACION_REAGENDA).order_by('id')
+            data['scores'] = [
+                NombreCalificacionSerializer(c).data for c in calificaciones]
+            return Response(data=data, status=status.HTTP_200_OK)
+        except SitioExterno.DoesNotExist:
+            data['status'] = 'ERROR'
+            data['message'] = _(u'Error al obtener las calificaciones')
+            return Response(
+                data=data, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+class CalificacionCreate(APIView):
+    permission_classes = (TienePermisoOML, )
+    authentication_classes = (
+        SessionAuthentication, ExpiringTokenAuthentication, )
+    renderer_classes = (JSONRenderer, )
+    http_method_names = ['post']
+
+    def validate_nombre(self, name, data):
+        errors = []
+        if name == '':
+            errors.append('El nombre es un campo requerido')
+        if len(name) > 50:
+            errors.append('El nombre no puede ser mayor a 50 caracteres')
+        if name == settings.CALIFICACION_REAGENDA:
+            errors.append('Esta calificación está reservada para el sistema')
+        if len(errors) > 0:
+            data['errors']['nombre'] = errors
+
+    def post(self, request):
+        data = {
+            'status': 'SUCCESS',
+            'errors': {},
+            'message': _('Se creo la calificacion '
+                         'de forma exitosa')}
+        try:
+            nombre = request.data.get('nombre')
+            self.validate_nombre(nombre, data)
+            if len(data['errors']) > 0:
+                data['status'] = 'ERROR'
+                data['message'] = _('Error al hacer la peticion')
+                return Response(
+                    data=data, status=status.HTTP_400_BAD_REQUEST)
+            NombreCalificacion.objects.create(nombre=nombre)
+            return Response(data=data, status=status.HTTP_200_OK)
+        except Exception:
+            data['status'] = 'ERROR'
+            data['message'] = _('Error al crear '
+                                'la calificacion')
+            return Response(
+                data=data, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+class CalificacionUpdate(APIView):
+    permission_classes = (TienePermisoOML, )
+    authentication_classes = (
+        SessionAuthentication, ExpiringTokenAuthentication, )
+    renderer_classes = (JSONRenderer, )
+    http_method_names = ['put']
+
+    def validate_nombre(self, name, data):
+        errors = []
+        if name == '':
+            errors.append('El nombre es un campo requerido')
+        if len(name) > 50:
+            errors.append('El nombre no puede ser mayor a 50 caracteres')
+        if name == settings.CALIFICACION_REAGENDA:
+            errors.append('Esta calificación está reservada para el sistema')
+        if len(errors) > 0:
+            data['errors']['nombre'] = errors
+
+    def put(self, request, pk):
+        data = {
+            'status': 'SUCCESS',
+            'errors': {},
+            'message': _('Se actualizo la calificacion '
+                         'de forma exitosa')}
+        try:
+            calificacion = NombreCalificacion.objects.get(pk=pk)
+            nombre = request.data.get('nombre')
+            self.validate_nombre(nombre, data)
+            if len(data['errors']) > 0:
+                data['status'] = 'ERROR'
+                data['message'] = _('Error al hacer la peticion')
+                return Response(
+                    data=data, status=status.HTTP_400_BAD_REQUEST)
+            calificacion.nombre = nombre
+            calificacion.save()
+            return Response(data=data, status=status.HTTP_200_OK)
+        except NombreCalificacion.DoesNotExist:
+            data['status'] = 'ERROR'
+            data['message'] = _('No existe la calificacion '
+                                'que se quiere actualizar')
+            return Response(
+                data=data, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        except Exception:
+            data['status'] = 'ERROR'
+            data['message'] = _('Error al actualizar '
+                                'la calificacion')
+            return Response(
+                data=data, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+class CalificacionDelete(APIView):
+    permission_classes = (TienePermisoOML, )
+    authentication_classes = (
+        SessionAuthentication, ExpiringTokenAuthentication, )
+    renderer_classes = (JSONRenderer, )
+    http_method_names = ['delete']
+
+    def delete(self, request, pk):
+        data = {
+            'status': 'SUCCESS',
+            'message': _('Se elimino la calificacion '
+                         'de forma exitosa')}
+        try:
+            calificacion = NombreCalificacion.objects.get(pk=pk)
+            agenda = NombreCalificacion.objects.get(
+                nombre=settings.CALIFICACION_REAGENDA)
+            if calificacion == agenda:
+                data['status'] = 'ERROR'
+                data['message'] = _('No está permitido eliminar una '
+                                    'calificacion reservada del sistema')
+                return Response(data=data, status=status.HTTP_400_BAD_REQUEST)
+            else:
+                calificacion.delete()
+                return Response(data=data, status=status.HTTP_200_OK)
+        except NombreCalificacion.DoesNotExist:
+            data['status'] = 'ERROR'
+            data['message'] = _(u'No existe la calificacion')
+            return Response(
+                data=data, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        except Exception:
+            data['status'] = 'ERROR'
+            data['message'] = _(u'Error al eliminar la calificacion')
             return Response(
                 data=data, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

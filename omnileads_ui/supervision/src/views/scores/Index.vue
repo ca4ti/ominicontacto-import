@@ -2,7 +2,7 @@
   <div class="card">
     <Toolbar class="p-mb-4">
       <template #start>
-        <h1>{{ $t("views.external_sities.list_title") }}</h1>
+        <h1>{{ $t("views.scores.list_title") }}</h1>
       </template>
       <template #end>
         <Button
@@ -17,37 +17,45 @@
       :scores="scores"
       @handleModalEvent='handleModal'
     />
-    <Modal />
+    <FormModal
+      :showModal='showModal'
+      :formToCreate='formToCreate'
+      :score="score"
+      @handleModalEvent='handleModal'
+    />
   </div>
 </template>
 
 <script>
 import { mapActions, mapState } from 'vuex';
 import ListTable from '@/components/scores/ListTable';
-import Modal from '@/components/scores/Modal';
+import FormModal from '@/components/scores/FormModal';
 
 export default {
     data () {
         return {
+            formToCreate: true,
             showModal: false,
-            score: null
+            score: { nombre: '' }
         };
     },
     components: {
         ListTable,
-        Modal
+        FormModal
     },
     async created () {
         await this.initData();
     },
     methods: {
         handleModal ({ showModal, toCreate, score }) {
-            console.log('INDEX - handleModal');
-            console.log(showModal, toCreate, score);
+            this.formToCreate = toCreate;
             this.showModal = showModal;
+            this.score = score;
         },
         newScore () {
             this.showModal = true;
+            this.formToCreate = true;
+            this.score = { nombre: '' };
         },
         async initData () {
             await this.initScores();

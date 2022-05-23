@@ -25,5 +25,9 @@ export default {
         objective: 'Meta',
         trigger: 'Acionar',
         status: 'Doença'
+    },
+    score: {
+        id: 'ID',
+        name: 'Nome'
     }
 };

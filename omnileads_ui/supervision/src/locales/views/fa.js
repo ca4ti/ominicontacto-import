@@ -33,5 +33,10 @@ export default {
         remove_hiddens: 'حذف پنهان',
         hide: 'مبدل کردن',
         show: 'پنهان کردن'
+    },
+    scores: {
+        list_title: 'رتبه بندی ها',
+        edit_title: 'امتیاز را ویرایش کنید',
+        new_title: 'رتبه بندی جدید'
     }
 };

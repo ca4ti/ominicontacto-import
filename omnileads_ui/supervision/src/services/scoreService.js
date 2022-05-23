@@ -7,7 +7,7 @@ export default class ScoreService extends BaseService {
             const resp = await fetch(apiUrls.ScoresList, this.payload);
             return await resp.json();
         } catch (error) {
-            console.error('No se pudieron obtener los sitios externos');
+            console.error('No se pudieron obtener las calificaciones');
             return [];
         }
     }
@@ -22,7 +22,7 @@ export default class ScoreService extends BaseService {
             this.initPayload();
             return await resp.json();
         } catch (error) {
-            console.error('No se pudo eliminar el sitio externo');
+            console.error('No se pudo eliminar la calificacion');
             return [];
         }
     }
@@ -37,7 +37,7 @@ export default class ScoreService extends BaseService {
             this.initPayload();
             return await resp.json();
         } catch (error) {
-            console.error('No se pudo crear el sitio externo');
+            console.error('No se pudo crear la calificacion');
             console.error(error);
             return {};
         }
@@ -53,7 +53,7 @@ export default class ScoreService extends BaseService {
             this.initPayload();
             return await resp.json();
         } catch (error) {
-            console.error('No se pudo actualizar el sitio externo');
+            console.error('No se pudo actualizar la calificacion');
             console.error(error);
             return {};
         }

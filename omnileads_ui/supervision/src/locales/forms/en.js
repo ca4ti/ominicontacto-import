@@ -9,5 +9,8 @@ export default {
     pause_setting: {
         enter_time: 'Enter the time',
         infinite_time: 'Infinite time'
+    },
+    score: {
+        enter_name: 'Enter the name'
     }
 };

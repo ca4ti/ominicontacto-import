@@ -25,5 +25,9 @@ export default {
         objective: 'هدف',
         trigger: 'ماشه',
         status: 'شرایط. شرط'
+    },
+    score: {
+        id: 'شناسه',
+        name: 'نام'
     }
 };

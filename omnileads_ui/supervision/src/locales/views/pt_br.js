@@ -33,5 +33,10 @@ export default {
         remove_hiddens: 'remover oculto',
         hide: 'Disfarce',
         show: 'mostrar'
+    },
+    scores: {
+        list_title: 'Classificações',
+        edit_title: 'Editar a classificação',
+        new_title: 'nova classificação'
     }
 };

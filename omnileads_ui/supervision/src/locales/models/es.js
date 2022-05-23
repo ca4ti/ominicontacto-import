@@ -25,5 +25,9 @@ export default {
         objective: 'Objetivo',
         trigger: 'Disparador',
         status: 'Estado'
+    },
+    score: {
+        id: 'ID',
+        name: 'Nombre'
     }
 };

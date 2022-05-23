@@ -33,5 +33,10 @@ export default {
         remove_hiddens: 'Remove hidden',
         hide: 'Hide',
         show: 'Unhide'
+    },
+    scores: {
+        list_title: 'Scores',
+        edit_title: 'Edit score ',
+        new_title: 'New score'
     }
 };

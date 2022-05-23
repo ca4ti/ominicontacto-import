@@ -50,9 +50,9 @@
       <Column
         field="nombre"
         :sortable="true"
-        :header="$t('models.external_site.name')"
+        :header="$t('models.score.name')"
       ></Column>
-      <Column :header="$tc('globals.option', 2)" :exportable="false">
+      <Column :header="$tc('globals.option', 2)" style="max-width: 20rem" :exportable="false">
         <template #body="slotProps">
           <Button
             icon="pi pi-pencil"
@@ -109,7 +109,6 @@ export default {
         async remove (id) {
             this.$swal({
                 title: this.$t('globals.sure_notification'),
-                text: this.$t('views.pause_sets.pause_settings_will_be_deleted'),
                 icon: this.$t('globals.icon_warning'),
                 showCancelButton: true,
                 confirmButtonText: this.$t('globals.yes'),
@@ -126,15 +125,15 @@ export default {
                             this.$swal.showLoading();
                         }
                     });
-                    const resp = await this.deleteExternalSite(id);
+                    const resp = await this.deleteScore(id);
                     this.$swal.close();
                     if (resp) {
-                        this.initExternalSities();
+                        this.initScores();
                         this.$swal(
                             this.$helpers.getToasConfig(
                                 this.$t('globals.success_notification'),
                                 this.$tc('globals.success_deleted_type', {
-                                    type: this.$tc('globals.external_site')
+                                    type: this.$tc('globals.score')
                                 }),
                                 this.$t('globals.icon_success')
                             )
@@ -144,7 +143,7 @@ export default {
                             this.$helpers.getToasConfig(
                                 this.$t('globals.error_notification'),
                                 this.$tc('globals.error_to_deleted_type', {
-                                    type: this.$tc('globals.external_site')
+                                    type: this.$tc('globals.score')
                                 }),
                                 this.$t('globals.icon_error')
                             )
@@ -155,7 +154,7 @@ export default {
                         this.$helpers.getToasConfig(
                             this.$t('globals.cancelled'),
                             this.$tc('globals.error_to_deleted_type', {
-                                type: this.$tc('globals.external_site')
+                                type: this.$tc('globals.score')
                             }),
                             this.$t('globals.icon_error')
                         )

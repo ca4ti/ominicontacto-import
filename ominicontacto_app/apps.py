@@ -205,22 +205,10 @@ class OminicontactoAppConfig(AppConfig):
                 'children': manuales
             })
         #  Calificaciones
-        calificaciones = []
         if 'calificacion_list' in permissions:
-            calificaciones.append({
-                'label': _('Listado de calificaciones'),
-                'url': reverse('calificacion_list')
-            })
-        if 'calificacion_nuevo' in permissions:
-            calificaciones.append({
-                'label': _('Nueva Calificación'),
-                'url': reverse('calificacion_nuevo')
-            })
-        if calificaciones:
             campanas.append({
                 'label': _('Calificaciones'),
-                'id': 'menuQualifications',
-                'children': calificaciones
+                'url': reverse('calificacion_list')
             })
         #  Formularios
         formularios = []

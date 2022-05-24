@@ -3188,7 +3188,7 @@ class SitioExterno(models.Model):
         (NUEVA_PESTANA, _('Nueva pestaña')),
     )
 
-    nombre = models.CharField(max_length=128)
+    nombre = models.CharField(max_length=128, unique=True)
     url = models.CharField(max_length=256)
     oculto = models.BooleanField(default=False)
     disparador = models.PositiveIntegerField(choices=DISPARADORES, default=SERVER)

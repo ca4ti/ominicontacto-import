@@ -370,6 +370,60 @@ class ConjuntoDePausaSerializer(serializers.ModelSerializer):
 
 
 class SitioExternoSerializer(serializers.ModelSerializer):
+
+    def validarFormato(self, formato, metodo):
+        if metodo == SitioExterno.GET and formato:
+            raise serializers.ValidationError({
+                'formato': 'Si el método es GET, no debe indicarse formato'
+            })
+        elif metodo == SitioExterno.POST and not formato:
+            raise serializers.ValidationError({
+                'formato': 'Si el método es POST, debe seleccionar un formato'
+            })
+
+    def validarObjetivo(self, objetivo, disparador, formato):
+        if formato == SitioExterno.JSON and objetivo:
+            raise serializers.ValidationError({
+                'objetivo': 'Si el formato es JSON, '
+                            'no puede haber un objetivo.'
+            })
+        if disparador == SitioExterno.SERVER and objetivo:
+            raise serializers.ValidationError({
+                'objetivo': 'Si el disparador es el servidor, '
+                            'no puede haber un objetivo.'
+            })
+        elif disparador != SitioExterno.SERVER and not objetivo:
+            raise serializers.ValidationError({
+                'objetivo': 'Debe indicar un objetivo válido'
+            })
+
+    def validate(self, data):
+        # metodo = data['metodo']
+        # formato = data['formato']
+        # disparador = data['disparador']
+        # objetivo = data['objetivo']
+        # self.validarFormato(formato, metodo)
+        # self.validarObjetivo(objetivo, disparador, formato)
+        self.errors['metodo'] = 'ERROR TEST'
+        return data
+
+    # def create(self, validated_data):
+    #     metodo = validated_data.get('metodo')
+    #     print('Create')
+    #     print(metodo)
+        # return SitioExterno.objects.create(**validated_data)
+
+    # def update(self, instance, validated_data):
+    #     instance.nombre = validated_data.get('nombre', instance.nombre)
+    #     instance.url = validated_data.get('url', instance.url)
+    #     instance.disparador = validated_data.get(
+    #         'disparador', instance.disparador)
+    #     instance.metodo = validated_data.get('metodo', instance.metodo)
+    #     instance.formato = validated_data.get('formato', instance.formato)
+    #     instance.objetivo = validated_data.get('objetivo', instance.objetivo)
+    #     instance.save()
+    #     return instance
+
     class Meta:
         model = SitioExterno
         fields = (

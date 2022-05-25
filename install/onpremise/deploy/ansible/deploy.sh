@@ -311,30 +311,30 @@ do
     ;;
   esac
 done
-./keytransfer.sh $INTERFACE $KEY
-ResultadoKeyTransfer=`echo $?`
-  if [ "$ResultadoKeyTransfer" == 1 ]; then
-    printf "$YELLOW It seems that there was a problem transfering yout public key to OMniLeads instance, it could because: $NC\n"
-    printf "$YELLOW 1. You don't have generated keys in the server you are executing this script. Try with ssh-keygen or check the ssh port configured in server $NC\n"
-    printf "$YELLOW 2. You need a private key identity file to connect to SSH to OMniLeads instance, place the key in the same folder of this script. $NC\n"
-    rm -rf /var/tmp/servers_installed
-    exit 1
-  elif [ "$ResultadoKeyTransfer" == 2 ]; then
-    echo "#######################################################################"
-    echo "# The option --interface must be used only in selfhosted installation #"
-    echo "#######################################################################"
-    exit 1
-  elif [ "$ResultadoKeyTransfer" == 3 ]; then
-    echo "#######################################"
-    echo "# Option --interface must be provided #"
-    echo "#######################################"
-    exit 1
-  elif [ "$ResultadoKeyTransfer" == 4 ]; then
-    echo "##############################################################"
-    echo "# It seems you typed a wrong interface in --interface option #"
-    echo "##############################################################"
-    exit 1
-  fi
+# ./keytransfer.sh $INTERFACE $KEY
+# ResultadoKeyTransfer=`echo $?`
+#   if [ "$ResultadoKeyTransfer" == 1 ]; then
+#     printf "$YELLOW It seems that there was a problem transfering yout public key to OMniLeads instance, it could because: $NC\n"
+#     printf "$YELLOW 1. You don't have generated keys in the server you are executing this script. Try with ssh-keygen or check the ssh port configured in server $NC\n"
+#     printf "$YELLOW 2. You need a private key identity file to connect to SSH to OMniLeads instance, place the key in the same folder of this script. $NC\n"
+#     rm -rf /var/tmp/servers_installed
+#     exit 1
+#   elif [ "$ResultadoKeyTransfer" == 2 ]; then
+#     echo "#######################################################################"
+#     echo "# The option --interface must be used only in selfhosted installation #"
+#     echo "#######################################################################"
+#     exit 1
+#   elif [ "$ResultadoKeyTransfer" == 3 ]; then
+#     echo "#######################################"
+#     echo "# Option --interface must be provided #"
+#     echo "#######################################"
+#     exit 1
+#   elif [ "$ResultadoKeyTransfer" == 4 ]; then
+#     echo "##############################################################"
+#     echo "# It seems you typed a wrong interface in --interface option #"
+#     echo "##############################################################"
+#     exit 1
+#   fi
 
 UserValidation
 AnsibleValidation

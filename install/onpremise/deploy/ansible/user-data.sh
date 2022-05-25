@@ -1,79 +1,40 @@
 #!/bin/bash
 
-oml_app_repo_url=https://gitlab.com/omnileads/ominicontacto.git
-SRC=/usr/src
-PATH_DEPLOY=install/onpremise/deploy/ansible
-CALLREC_DIR_DST=/opt/omnileads/asterisk/var/spool/asterisk/monitor
-SSM_AGENT_URL="https://s3.amazonaws.com/ec2-downloads-windows/SSMAgent/latest/linux_amd64/amazon-ssm-agent.rpm"
-S3FS="/bin/s3fs"
-PATH_CERTS="$(cd "$(dirname "$BASH_SOURCE")" &> /dev/null && pwd)/certs"
+UserValidation() {
+  echo -e "\n"
+  echo "##########################################################"
+  echo "#         Welcome to OMniLeads deployment script         #"
+  echo "##########################################################"
+  echo ""
+  WhoAamI="`whoami`"
+  if [ "${WhoAamI}" == "root" ];then
+  printf "$GREEN*** [OMniLeads] You have permission to run the script. Continuing. $NC\n"
+  else
+    printf "$RED*** [OMniLeads] You need to be root or have sudo permission to run this script. Exiting. $NC\n"
+    exit 1
+  fi
+}
 
-
-# if callrec device like DISK BLOCK DEVICE
-if [[ ${oml_callrec_device} == "disk" ]];then
-  CALLREC_BLOCK_DEVICE=/dev/disk/by-label/callrec-${oml_tenant_name}
-fi
+AnsibleExec() {
 
 echo "******************** OML RELEASE = ${oml_app_release} ********************"
 
 sleep 5
 
-echo "******************** block_device mount ********************"
-
-if [[ ${optoml_device} != "NULL" ]];then
-  mkdir /opt/omnileads
-  echo "${optoml_device} /opt/omnileads ext4 defaults,nofail,discard 0 0" >> /etc/fstab
-fi
-
-if [[ ${pgsql_device} != "NULL" ]];then
-  mkdir /var/lib/pgsql
-  echo "${pgsql_device} /var/lib/pgsql ext4 defaults,nofail,discard 0 0" >> /etc/fstab
-fi
-
-mount -a
-sleep 10
-mount
-
-echo "******************** IPV4 address config ********************"
-
-case ${oml_infras_stage} in
-  aws)
-    echo -n "AWS"
-    PRIVATE_IPV4=$(ip addr show ${oml_nic} | grep "inet\b" | awk '{print $2}' | cut -d/ -f1)
-    PUBLIC_IPV4=$(curl ifconfig.co)
-    ;;
-  digitalocean)
-    echo -n "DigitalOcean"
-    PUBLIC_IPV4=$(curl -s http://169.254.169.254/metadata/v1/interfaces/public/0/ipv4/address)
-    PRIVATE_IPV4=$(curl -s http://169.254.169.254/metadata/v1/interfaces/private/0/ipv4/address)
-    ;;
-  linode)
-    echo -n "Linode"
-    PRIVATE_IPV4=$(ip addr show ${oml_nic} |grep "inet 192.168" |awk '{print $2}' | cut -d/ -f1)
-    PUBLIC_IPV4=$(curl checkip.amazonaws.com)
-    ;;
-  onpremise)
-    echo -n "Onpremise CentOS7 Minimal"
-    PRIVATE_IPV4=$(ip addr show ${oml_nic} | grep "inet\b" | awk '{print $2}' | cut -d/ -f1)
-    PUBLIC_IPV4=$(curl ifconfig.co)
-    ;;
-  vagrant)
-    echo -n "Vagrant CentOS7 Minimal CI/CD"
-    PRIVATE_IPV4=$STAGING_IP_CENTOS
-    PUBLIC_IPV4=$(curl ifconfig.co)
-    ;;
-  *)
-    echo -n "You must to set STAGE variable\n"
-    ;;
-esac
-
 echo "******************** SELinux and firewalld disable ********************"
 
-setenforce 0
-sed -i 's/^SELINUX=.*/SELINUX=disabled/' /etc/sysconfig/selinux
-sed -i 's/^SELINUX=.*/SELINUX=disabled/' /etc/selinux/config
-systemctl disable firewalld > /dev/null 2>&1
-systemctl stop firewalld > /dev/null 2>&1
+case ${oml_infras_stage} in
+  onpremise)
+    setenforce 0
+    sed -i 's/^SELINUX=.*/SELINUX=disabled/' /etc/sysconfig/selinux
+    sed -i 's/^SELINUX=.*/SELINUX=disabled/' /etc/selinux/config
+    systemctl disable firewalld > /dev/null 2>&1
+    systemctl stop firewalld > /dev/null 2>&1
+    ;;
+  *)
+    echo " nothing "
+    ;;
+esac
 
 echo "******************** yum update and install packages ********************"
 
@@ -107,6 +68,8 @@ git submodule update --remote
 echo "******************** inventory setting ********************"
 
 sed -i "s/#localhost ansible/localhost ansible/g" $PATH_DEPLOY/inventory
+#sed -i "s/iface=/iface=$oml_nic/g" $PATH_DEPLOY/inventory
+#sed -i "s/oml_release=master/oml_release=$oml_app_release/g" $PATH_DEPLOY/inventory
 
 # PGSQL edit inventory params **************************************************
 
@@ -230,81 +193,115 @@ sed -i "s%\#google_maps_api_key=%google_maps_api_key=${oml_google_maps_api_key}%
 sed -i "s%\#google_maps_center=%google_maps_center='${oml_google_maps_center}'%g" $PATH_DEPLOY/inventory
 fi
 
-# User certs verification *******
-
-if [ -f $PATH_CERTS/key.pem ] && [ -f $PATH_CERTS/cert.pem ];then
-        cp $PATH_CERTS/key.pem $SRC/ominicontacto/install/onpremise/deploy/ansible/certs
-        cp $PATH_CERTS/cert.pem $SRC/ominicontacto/install/onpremise/deploy/ansible/certs
-fi
-
-sleep 2
 echo "******************** deploy.sh execution ********************"
 
+# commit=$(git rev-parse HEAD)
+# build_date=$(env LC_hosts=C LC_TIME=C date)
+# current_tag="`git tag -l --points-at HEAD`"
+# release_name=$(git show ${current_tag} |grep "Merge branch" |awk -F " " '{print $3}' |tr -d "'")
+# branch_name="`git branch | grep \* | cut -d ' ' -f2`"
+
+set -o allexport
+source "$current_directory/.env"
+set +o allexport
+
 cd $PATH_DEPLOY
-./deploy.sh -i --iface=${oml_nic}
+ansible-playbook omnileads.yml --extra-vars "iface=$oml_nic \
+                  oml_release=$(git branch | awk '{print $2}') \
+                  commit=$(git rev-parse HEAD) \
+                  build_date=\"$(env LC_hosts=C LC_TIME=C date)\"" \ -i inventory 
+ResultadoAnsible=`echo $?`
 
-echo "******************** NET File Systen callrec ********************"
-
-case ${oml_callrec_device} in
-  nfs)
-    echo "Callrec device: NFS \n"
-    yum install -y nfs-utils nfs-utils-lib
-    if [ ! -d $CALLREC_DIR_DST ];then
-      mkdir -p $CALLREC_DIR_DST
-      chown omnileads.omnileads -R $CALLREC_DIR_DST
-    fi
-    echo "${nfs_host}:$CALLREC_DIR_DST $CALLREC_DIR_DST nfs auto,nofail,noatime,nolock,intr,tcp,actimeo=1800 0 0" >> /etc/fstab
-    mount -a
-    ;;
-  disk)
-    echo "Callrec device: Disk \n"
-    mkdir -p $CALLREC_DIR_DST
-    echo "$CALLREC_BLOCK_DEVICE  $CALLREC_DIR_DST ext4 defaults,nofail,discard 0 0" >> /etc/fstab
-    mount -a
-    ;;
-  *)
-    echo "other method ... \n"
-    ;;
- esac
-
-sleep 5
-
-echo "******************** Exec task if RTP run AIO ********************"
-
-if [[ "${oml_rtpengine_host}" == "NULL" && "${oml_infras_stage}" != "onpremise" ]];then
-  echo -n "STAGE rtpengine \n"
-  echo "OPTIONS="-i $PUBLIC_IPV4 -o 60 -a 3600 -d 30 -s 120 -n 127.0.0.1:22222 -m 20000 -M 30000 -L 7 --log-facility=local1""  > /etc/rtpengine-config.conf
-  systemctl start rtpengine
+if [ $ResultadoAnsible == 0 ];then
+  echo "
+  @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+  @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+  @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+  @@@@@@@@@@@@@@@////@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+  @@@@@@@@@@@@@@/@@@@/@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+  @@@@@@@@@@@@@/@/@////@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+  @@@@@@/@@@/@@@/@@@@@@@/@@@@/@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@/@@@/@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@/@@@@@@@@@@@@@
+  @@@@@@/@@@/@@@/@@@@@@@/@@@@/@@@@@@@//@@@@@/@@@///@@@@@&//@@@@@@@@@@@@@@@@/@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@/@@@@@@@@@@@@@
+  @@@@@@@@/@/@@@&/@@//@@@(@/@@@@@@@@/@@@@@@@@/@@////@@@@/@/@@@//@@@/@@@/@@@/@@@@@@@//@@@/@@@/@@@/@@@//@@@///@@/@@@/@@@@@@
+  @@@@@@@@/@@/&//%//@/@//@@/@@@@@@@@/@@@@@@@@/%@//@//@@/@@/@@@/@@@@//@@/@@@/@@@@@@/@@@//@@@@@/////@/@@@@@@#/@@///@@@@@@@@
+  @@@@@@@////@/@@////@@/@///@@@@@@@@//@@@@@@//@@//@@/@/@@@/@@@/@@@@//@@/@@@/@@@@@@///@@@@/@/@@@@@/@@/@@@@@//@@@@@@/@@@@@@
+  @@@@@@/@@@//@//@@@@/@@/@@@@/@@@@@@@@//////@@@@//@@@/@@@@/@@@/@@@@//@@/@@@///////@@////@@@@////@/@@@/////@/@@/////@@@@@@
+  @@@@@@/@@@//@@@@@@/@@@//@@/@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+  @@@@@@@@@@@@@@/@@@//@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+  @@@@@@@@@@@@@@/@@@@&@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+  @@@@@@@@@@@@@@@@&@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+  @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+  @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+                                          The Open Source Contact Center Solution
+                                           Copyright (C) 2018 Freetech Solutions"
+  echo ""
+  echo "#############################################################"
+  echo "#         OMniLeads installation ended successfully         #"
+  echo "#############################################################"
+  echo ""
+  git checkout $current_directory/inventory
+else
+  echo ""
+  echo "#######################################################################################"
+  echo "#         OMniLeads installation failed. Check what happened and try it again         #"
+  echo "#######################################################################################"
+  echo ""
 fi
 
-echo "******************** REDIS accept conection on private NIC ********************"
+}
 
-if [[ "${oml_redis_host}" == "NULL" ]];then
-  sed -i "s/bind 127.0.0.1/bind 127.0.0.1 $PRIVATE_IPV4/g" /etc/redis.conf
-fi
+# for i in "$@"
+# do
+#   case $i in
+#     --upgrade|-u|--install|-i|--exclude-kamailio|-k|--asterisk|-a|--omniapp|-o|--omnivoip|--dialer|-di|--database|-da|--change-network|-cnet|--change-passwords|-cp|--docker-no-build|--docker-build|--docker-deploy)
+#       TagCheck
+#       shift
+#     ;;
+#     --iface=*|--interface=*)
+#       INTERFACE="${i#*=}"
+#       KEY="none"
+#       shift
+#     ;;
+#     --key=*)
+#       INTERFACE="none"
+#       KEY="${i#*=}"
+#       shift
+#     ;;
+#     --docker-tag=*)
+#       DOCKER_TAG="${i#*=}"
+#       shift
+#     ;;
+#     --help|-h)
+#       echo "
+#         OMniLeads installation script
+#         -----------------------------
+#         How to use it:
+#               -a, --asterisk: Execute Asterisk related tasks.
+#               -da, --database: Execute database related tasks.
+#               -di, --dialer: Execute dialer (WombatDialer) related tasks.
+#               --docker-deploy: Deploy OMniLeads in docker containers, using docker-compose.
+#               --docker-build: Build and push OMniLeads images to a registry.
+#               --docker-no-build: Execute build images steps, without building and pushing the images.
+#               -i, --install: Perform a fresh install of OMniLeads.
+#               -k, --kamailio: Execute Kamailio related tasks.
+#               -o, --omniapp: Execute OmniApp related tasks.
+#               -u, --upgrade: Execute an upgrade of OMniLeads version.
+#               --iface, --interface: Set the specific interface where OMniLeads services will be listening (USE THIS OPTION ONLY WHEN INSTALLATION IS SELFHOSTED).
+#               --key: Set the public key to connect to the OMniLeads instance using SSH, without authentication.
+#             "
+#       shift
+#       exit 1
+#     ;;
+#     -v*)
+#       verbose=$1
+#       shift
+#     ;;
+#     *)
+#       echo "One or more invalid options. For more information, execute: ./deploy.sh -h or ./deploy.sh --help."
+#       exit 1
+#     ;;
+#   esac
+# done
 
-
-echo "******************** setting demo environment ********************"
-
-if [[ "${oml_auto_restore}" != "NULL" ]];then
-echo "59 23 * * * /opt/omnileads/bin/backup-restore.sh --backup --omniapp --target=/opt/omnileads/asterisk/var/spool/asterisk/monitor" >> /var/spool/cron/omnileads
-fi
-
-echo "********************* Deactivate cron callrec convert to mp3 *****************"
-if [ "${oml_acd_host}"  != "NULL" ] &&  [ "${oml_callrec_device}"  == "nfs" ];then
-sed -i "s/0 1 \* \* \* source/#0 1 \* \* \* source/g" /var/spool/cron/omnileads
-fi
-
-if [ "${oml_acd_host}"  != "NULL" ] &&  [ "${oml_callrec_device}"  != "nfs" ];then
-sed -i "s/conversor.sh 1 0/conversor.sh 2 0/g" /var/spool/cron/omnileads
-fi
-
-echo "******************** sngrep SIP sniffer install ********************"
-
-if [[ "${oml_app_install_sngrep}" == "true" ]];then
-  yum install ncurses-devel make libpcap-devel pcre-devel \
-      openssl-devel git gcc autoconf automake -y
-  cd /root && git clone https://github.com/irontec/sngrep
-  cd sngrep && ./bootstrap.sh && ./configure && make && make install
-  ln -s /usr/local/bin/sngrep /usr/bin/sngrep
-fi
+UserValidation
+AnsibleExec

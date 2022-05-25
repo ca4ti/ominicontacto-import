@@ -1,7 +1,7 @@
 [submodule "modules/websockets"]
     path = modules/websockets
     url = https://gitlab.com/omnileads/omnileads-websockets.git
-    branch = develop
+    branch = oml-2207-dev-websockets-ha
 [submodule "modules/nginx"]
     path = modules/nginx
     url = https://gitlab.com/omnileads/omlnginx.git
@@ -17,7 +17,7 @@
 [submodule "modules/redis"]
     path = modules/redis
     url = https://gitlab.com/omnileads/omlredis.git
-    branch = develop
+    branch = oml-podman
 [submodule "modules/postgresql"]
     path = modules/postgresql
     url = https://gitlab.com/omnileads/omlpgsql.git

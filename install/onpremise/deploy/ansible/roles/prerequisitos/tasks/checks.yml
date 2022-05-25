@@ -84,7 +84,7 @@
   when: rtpengine_host is not defined
 
 - name: Setting redis as localhost
-  set_fact: redis_host=localhost
+  set_fact: redis_host="{{ omni_ip }}"
   tags: always
   changed_when: false
   when: redis_host is not defined

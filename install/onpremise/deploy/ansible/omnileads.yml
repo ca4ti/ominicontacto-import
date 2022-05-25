@@ -32,7 +32,7 @@
     - prerequisitos
 
 - import_playbook: ../../../../modules/redis/deploy/redis.yml
-  when: redis_host == "localhost"
+  when: redis_host == omni_ip
 - import_playbook: ../../../../modules/postgresql/deploy/postgresql.yml
   when: postgres_host == "localhost"
 - import_playbook: ../../../../modules/rtpengine/deploy/rtpengine.yml

@@ -1,5 +1,13 @@
 #!/bin/bash
 
+RebrandValidation() {
+  if [ $REPO_NAME == "ominicontacto" ];then
+    Rebrand="false"
+  else
+    Rebrand="true"
+  fi
+}
+
 UserValidation() {
   echo -e "\n"
   echo "##########################################################"
@@ -68,8 +76,6 @@ git submodule update --remote
 echo "******************** inventory setting ********************"
 
 sed -i "s/#localhost ansible/localhost ansible/g" $PATH_DEPLOY/inventory
-#sed -i "s/iface=/iface=$oml_nic/g" $PATH_DEPLOY/inventory
-#sed -i "s/oml_release=master/oml_release=$oml_app_release/g" $PATH_DEPLOY/inventory
 
 # PGSQL edit inventory params **************************************************
 
@@ -140,7 +146,6 @@ sed -i "s/#sentinel_host_02=/sentinel_host_02=${oml_sentinel_host_02}/g" $PATH_D
 sed -i "s/#sentinel_host_03=/sentinel_host_03=${oml_sentinel_host_03}/g" $PATH_DEPLOY/inventory
 fi
 
-
 if [[ "$NGINX_HOST" != "NULL" ]];then
   sed -i "s/#nginx_host=/nginx_host=$NGINX_HOST/g" $PATH_DEPLOY/inventory
 fi
@@ -201,15 +206,11 @@ sed -i "s%\#google_maps_api_key=%google_maps_api_key=${oml_google_maps_api_key}%
 sed -i "s%\#google_maps_center=%google_maps_center='${oml_google_maps_center}'%g" $PATH_DEPLOY/inventory
 fi
 
-echo "******************** deploy.sh execution ********************"
+echo "******************** omnileads.yml playbook execution ********************"
+echo "******************** omnileads.yml playbook execution ********************"
+echo "******************** omnileads.yml playbook execution ********************"
 
-# commit=$(git rev-parse HEAD)
-# build_date=$(env LC_hosts=C LC_TIME=C date)
-# current_tag="`git tag -l --points-at HEAD`"
-# release_name=$(git show ${current_tag} |grep "Merge branch" |awk -F " " '{print $3}' |tr -d "'")
-# branch_name="`git branch | grep \* | cut -d ' ' -f2`"
 cd $PATH_DEPLOY
-
 touch /var/tmp/oml_install
 
 set -o allexport
@@ -217,6 +218,7 @@ source ".ansible_env"
 set +o allexport
 
 ansible-playbook omnileads.yml --extra-vars "iface=$oml_nic \
+                  rebrand=$Rebrand \
                   oml_release=$(git branch | awk '{print $2}') \
                   commit=$(git rev-parse HEAD) \
                   build_date=\"$(env LC_hosts=C LC_TIME=C date)\"" -i inventory 
@@ -260,58 +262,7 @@ fi
 
 }
 
-# for i in "$@"
-# do
-#   case $i in
-#     --upgrade|-u|--install|-i|--exclude-kamailio|-k|--asterisk|-a|--omniapp|-o|--omnivoip|--dialer|-di|--database|-da|--change-network|-cnet|--change-passwords|-cp|--docker-no-build|--docker-build|--docker-deploy)
-#       TagCheck
-#       shift
-#     ;;
-#     --iface=*|--interface=*)
-#       INTERFACE="${i#*=}"
-#       KEY="none"
-#       shift
-#     ;;
-#     --key=*)
-#       INTERFACE="none"
-#       KEY="${i#*=}"
-#       shift
-#     ;;
-#     --docker-tag=*)
-#       DOCKER_TAG="${i#*=}"
-#       shift
-#     ;;
-#     --help|-h)
-#       echo "
-#         OMniLeads installation script
-#         -----------------------------
-#         How to use it:
-#               -a, --asterisk: Execute Asterisk related tasks.
-#               -da, --database: Execute database related tasks.
-#               -di, --dialer: Execute dialer (WombatDialer) related tasks.
-#               --docker-deploy: Deploy OMniLeads in docker containers, using docker-compose.
-#               --docker-build: Build and push OMniLeads images to a registry.
-#               --docker-no-build: Execute build images steps, without building and pushing the images.
-#               -i, --install: Perform a fresh install of OMniLeads.
-#               -k, --kamailio: Execute Kamailio related tasks.
-#               -o, --omniapp: Execute OmniApp related tasks.
-#               -u, --upgrade: Execute an upgrade of OMniLeads version.
-#               --iface, --interface: Set the specific interface where OMniLeads services will be listening (USE THIS OPTION ONLY WHEN INSTALLATION IS SELFHOSTED).
-#               --key: Set the public key to connect to the OMniLeads instance using SSH, without authentication.
-#             "
-#       shift
-#       exit 1
-#     ;;
-#     -v*)
-#       verbose=$1
-#       shift
-#     ;;
-#     *)
-#       echo "One or more invalid options. For more information, execute: ./deploy.sh -h or ./deploy.sh --help."
-#       exit 1
-#     ;;
-#   esac
-# done
-
+RebrandValidation
 UserValidation
 AnsibleExec
+

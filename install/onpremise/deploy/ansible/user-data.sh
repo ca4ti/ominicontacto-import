@@ -200,16 +200,18 @@ echo "******************** deploy.sh execution ********************"
 # current_tag="`git tag -l --points-at HEAD`"
 # release_name=$(git show ${current_tag} |grep "Merge branch" |awk -F " " '{print $3}' |tr -d "'")
 # branch_name="`git branch | grep \* | cut -d ' ' -f2`"
+cd $PATH_DEPLOY
+
+touch /var/tmp/oml_install
 
 set -o allexport
 source ".ansible_env"
 set +o allexport
 
-cd $PATH_DEPLOY
 ansible-playbook omnileads.yml --extra-vars "iface=$oml_nic \
                   oml_release=$(git branch | awk '{print $2}') \
                   commit=$(git rev-parse HEAD) \
-                  build_date=\"$(env LC_hosts=C LC_TIME=C date)\"" \ -i inventory 
+                  build_date=\"$(env LC_hosts=C LC_TIME=C date)\"" -i inventory 
 ResultadoAnsible=`echo $?`
 
 if [ $ResultadoAnsible == 0 ];then

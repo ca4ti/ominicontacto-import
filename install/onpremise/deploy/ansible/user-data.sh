@@ -67,25 +67,6 @@ case ${oml_infras_stage} in
     ;;
 esac
 
-echo "******************** STAGE fix /etc/hosts ********************"
-
-case ${oml_infras_stage} in
-  digitalocean)
-    echo -n "DigitalOcean"
-    sed -i 's/127.0.0.1 '$(hostname)'/#127.0.0.1 '$(hostname)'/' /etc/hosts
-    sed -i 's/::1 '$(hostname)'/#::1 '$(hostname)'/' /etc/hosts
-    ;;
-  vultr)
-    echo -n "Vultr"
-    TEMP_HOSTNAME=$(hostname)
-    sed -i 's/127.0.0.1 '$TEMP_HOSTNAME'/#127.0.0.1 '$TEMP_HOSTNAME'/' /etc/hosts
-    sed -i 's/::1       '$TEMP_HOSTNAME'/#::1 '$TEMP_HOSTNAME'/' /etc/hosts
-    ;;
-  *)
-    echo -n "Your stage is clean.\n"
-    ;;
-esac
-
 echo "******************** SELinux and firewalld disable ********************"
 
 setenforce 0
@@ -100,13 +81,13 @@ case ${oml_infras_stage} in
   aws)
     yum remove -y python3 python3-pip
     yum install -y $SSM_AGENT_URL
-    yum install -y patch libedit-devel libuuid-devel git
+    yum install -y patch libedit-devel libuuid-devel git podman
     amazon-linux-extras install -y epel
     amazon-linux-extras install python3 -y
     systemctl start amazon-ssm-agent
     ;;
   *)
-    yum -y install git python3 python3-pip kernel-devel epel-release libselinux-python3 awscli
+    yum -y install git python3 python3-pip kernel-devel epel-release libselinux-python3 awscli podman
     ;;
 esac
 

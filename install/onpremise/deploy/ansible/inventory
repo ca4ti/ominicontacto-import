@@ -72,6 +72,11 @@ websocket_port=8000
 # Uncomment the variables and place the hostnames of these servers                           #
 ##############################################################################################
 #redis_host=
+redis_ha=false
+
+#sentinel_host_01=
+#sentinel_host_02=
+#sentinel_host_03=
 
 #########################################################################################################################################
 # External IP. This parameter will set the public IP for SIP and RTP traffic, on environments where calls go through a firewall. 	#

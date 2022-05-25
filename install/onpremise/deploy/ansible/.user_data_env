@@ -76,6 +76,14 @@ oml_kamailio_host=NULL
 # ******* Variables for Redis and Websocket *******
 # Values: NULL | IP address or FQDN
 oml_redis_host=NULL
+
+# Values: True or NULL
+export oml_redis_ha=NULL
+export oml_sentinel_host_01=NULL
+export oml_sentinel_host_02=NULL
+export oml_sentinel_host_03=NULL
+
+
 # Values: NULL | IP address or FQDN
 oml_websocket_host=NULL
 oml_websocket_port=NULL

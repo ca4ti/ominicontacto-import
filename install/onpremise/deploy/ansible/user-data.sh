@@ -202,7 +202,7 @@ echo "******************** deploy.sh execution ********************"
 # branch_name="`git branch | grep \* | cut -d ' ' -f2`"
 
 set -o allexport
-source "$current_directory/.env"
+source ".ansible_env"
 set +o allexport
 
 cd $PATH_DEPLOY

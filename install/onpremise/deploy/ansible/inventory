@@ -71,7 +71,7 @@ websocket_port=8000
 # or kamailio in diferent servers.                                                           #
 # Uncomment the variables and place the hostnames of these servers                           #
 ##############################################################################################
-redis_host=redis
+#redis_host=
 redis_ha=false
 
 #sentinel_host_01=

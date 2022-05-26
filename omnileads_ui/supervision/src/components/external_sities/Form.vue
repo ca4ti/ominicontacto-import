@@ -185,8 +185,8 @@ export default {
                     url: '',
                     metodo: 0,
                     disparador: 0,
-                    formato: 0,
-                    objetivo: 0
+                    formato: null,
+                    objetivo: null
                 };
             }
         }
@@ -198,8 +198,8 @@ export default {
                 url: '',
                 metodo: 0,
                 disparador: 0,
-                formato: 0,
-                objetivo: 0
+                formato: null,
+                objetivo: null
             },
             submitted: false,
             filters: null,
@@ -211,12 +211,12 @@ export default {
                 { name: 'POST', value: 2 }
             ],
             objectives: [
-                { name: '-------', value: 0 },
+                { name: '-------', value: null },
                 { name: 'Embebido', value: 1 },
                 { name: 'Nueva pestaña', value: 2 }
             ],
             formats: [
-                { name: '-------', value: 0 },
+                { name: '-------', value: null },
                 { name: 'multipart/form-data', value: 1 },
                 { name: 'application/x-www-form-urlencoded', value: 2 },
                 { name: 'text/plain', value: 3 },
@@ -246,14 +246,14 @@ export default {
             this.externalSiteForm.disparador = this.externalSite.disparador;
             this.externalSiteForm.formato = this.externalSite.formato;
             this.externalSiteForm.objetivo = this.externalSite.objetivo;
-            if (this.externalSiteForm.metodo === 1) {
-                this.externalSiteForm.formato = 0;
+            if ([1, 0].includes(this.externalSite.metodo)) {
+                this.externalSiteForm.formato = null;
                 this.status_format = true;
             } else {
                 this.status_format = false;
             }
-            if (this.externalSite.disparador === 3) {
-                this.externalSiteForm.objetivo = 0;
+            if ([3, 0].includes(this.externalSite.disparador)) {
+                this.externalSiteForm.objetivo = null;
                 this.status_objective = true;
             } else {
                 this.status_objective = false;
@@ -268,21 +268,18 @@ export default {
             };
         },
         triggerEvent () {
-            if (this.externalSiteForm.disparador === 3) {
+            if ([3, 0].includes(this.externalSiteForm.disparador) || this.externalSiteForm.formato === 4) {
                 this.status_objective = true;
-                this.externalSiteForm.objetivo = 0;
+                this.externalSiteForm.objetivo = null;
             } else {
                 this.status_objective = false;
                 this.externalSiteForm.objetivo = 1;
             }
         },
         methodEvent () {
-            if (
-                this.externalSiteForm.metodo === 1 ||
-        this.externalSiteForm.metodo === 0
-            ) {
+            if ([1, 0].includes(this.externalSiteForm.metodo)) {
                 this.status_format = true;
-                this.externalSiteForm.formato = 0;
+                this.externalSiteForm.formato = null;
             } else {
                 this.status_format = false;
                 this.externalSiteForm.formato = 1;
@@ -292,9 +289,12 @@ export default {
             }
         },
         formatEvent () {
-            if (this.externalSiteForm.formato === 4) {
+            if (this.externalSiteForm.formato !== 4 && [3, 0].includes(this.externalSiteForm.disparador)) {
                 this.status_objective = true;
-                this.externalSiteForm.objetivo = 0;
+                this.externalSiteForm.objetivo = null;
+            } else if (this.externalSiteForm.formato === 4 && ![3, 0].includes(this.externalSiteForm.disparador)) {
+                this.status_objective = true;
+                this.externalSiteForm.objetivo = null;
             } else {
                 this.status_objective = false;
                 this.externalSiteForm.objetivo = 1;
@@ -311,7 +311,7 @@ export default {
             if (!isFormValid) {
                 if (
                     this.externalSiteForm.metodo === 2 &&
-          this.externalSiteForm.formato === 0
+          this.externalSiteForm.formato === null
                 ) {
                     this.invalid_format = true;
                 } else {
@@ -321,7 +321,7 @@ export default {
             }
             if (
                 this.externalSiteForm.metodo === 2 &&
-        this.externalSiteForm.formato === 0
+        this.externalSiteForm.formato === null
             ) {
                 this.invalid_format = true;
                 return null;

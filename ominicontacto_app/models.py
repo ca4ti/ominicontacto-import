@@ -3189,9 +3189,10 @@ class SitioExterno(models.Model):
     )
 
     nombre = models.CharField(max_length=128, unique=True)
-    url = models.CharField(max_length=256)
+    url = models.URLField(max_length=250)
     oculto = models.BooleanField(default=False)
-    disparador = models.PositiveIntegerField(choices=DISPARADORES, default=SERVER)
+    disparador = models.PositiveIntegerField(
+        choices=DISPARADORES, default=SERVER)
     metodo = models.PositiveIntegerField(choices=METODOS, default=GET)
     formato = models.PositiveIntegerField(choices=FORMATOS, default=MULTIPART,
                                           blank=True, null=True,

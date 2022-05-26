@@ -398,31 +398,17 @@ class SitioExternoSerializer(serializers.ModelSerializer):
             })
 
     def validate(self, data):
-        # metodo = data['metodo']
-        # formato = data['formato']
-        # disparador = data['disparador']
-        # objetivo = data['objetivo']
-        # self.validarFormato(formato, metodo)
-        # self.validarObjetivo(objetivo, disparador, formato)
-        self.errors['metodo'] = 'ERROR TEST'
+        metodo = data['metodo']
+        formato = data['formato']
+        disparador = data['disparador']
+        objetivo = data['objetivo']
+        self.validarFormato(formato, metodo)
+        self.validarObjetivo(objetivo, disparador, formato)
+        if not objetivo or objetivo is None:
+            data['objetivo'] = 1
+        if not formato or formato is None:
+            data['formato'] = 1
         return data
-
-    # def create(self, validated_data):
-    #     metodo = validated_data.get('metodo')
-    #     print('Create')
-    #     print(metodo)
-        # return SitioExterno.objects.create(**validated_data)
-
-    # def update(self, instance, validated_data):
-    #     instance.nombre = validated_data.get('nombre', instance.nombre)
-    #     instance.url = validated_data.get('url', instance.url)
-    #     instance.disparador = validated_data.get(
-    #         'disparador', instance.disparador)
-    #     instance.metodo = validated_data.get('metodo', instance.metodo)
-    #     instance.formato = validated_data.get('formato', instance.formato)
-    #     instance.objetivo = validated_data.get('objetivo', instance.objetivo)
-    #     instance.save()
-    #     return instance
 
     class Meta:
         model = SitioExterno

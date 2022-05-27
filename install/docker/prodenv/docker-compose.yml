@@ -32,26 +32,6 @@ services:
       - sounds:/var/lib/asterisk/sounds/
     working_dir: /etc/asterisk
 
-  app:
-    container_name: omlapp
-    depends_on:
-      - acd
-    dns: 8.8.8.8
-    env_file:
-      - .env
-    image: freetechsolutions/omlapp:${OMLAPP_VERSION}
-    networks:
-      - prodenv
-    privileged: true
-    restart: on-failure
-    stdin_open: true
-    stop_grace_period: 1m30s
-    tty: true
-    volumes:
-      - media_root:/opt/omnileads/media_root
-      - sounds:/var/lib/asterisk/sounds/
-    working_dir: /opt/omnileads/ominicontacto
-
   kamailio:
     command:
       - /bin/bash
@@ -76,27 +56,6 @@ services:
     privileged: true
     restart: on-failure
     stop_grace_period: 1m30s
-
-  nginx:
-    container_name: omlnginx
-    depends_on:
-      - app
-      - kamailio
-    dns: 8.8.8.8
-    environment:
-      - TZ=${TZ}
-      - ENV=prodenv
-      - INFRA=docker
-    image: freetechsolutions/omlnginx:${OMLNGINX_VERSION}
-    networks:
-      - prodenv
-    privileged: true
-    ports:
-      - ${NGINX_EXT_PORT}:443/tcp
-    restart: on-failure
-    stop_grace_period: 1m30s
-    volumes:
-      - ${CALLREC_DIR_DST}:/var/spool/asterisk/monitor
 
   redis:
     container_name: omlredis
@@ -129,8 +88,4 @@ networks:
         - subnet: "${SUBNET}"
 
 volumes:
-  ast_conf_files:
-  media_root:
-  recordings:
   redis_data:
-  sounds:

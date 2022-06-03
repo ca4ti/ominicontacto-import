@@ -15,89 +15,88 @@
 ########################## README ############ README ############# README #########################
 
 # ******************** SET ENV VARS ******************** #
-
-# The infrastructure environment:
-# Values: onpremise | digitalocean | linode | vultr | aws
+# ********** # The infrastructure environment:
+# ********** # Values: onpremise | digitalocean | linode | vultr | aws
 #export oml_infras_stage=onpremise
 
-# The GitLab branch
+# ********** # The GitLab branch
 #export oml_app_release=release-1.21.0
 
-# OMniLeads tenant NAME
+# ********** # OMniLeads tenant NAME
 #export oml_tenant_name=onpremise
 
-# Device for recordings
-# Values: local | s3 | s3-minio | s3-aws | nfs | disk
+# ********** # Device for recordings
+# ********** # Values: local | s3 | s3-minio | s3-aws | nfs | disk
 #export oml_callrec_device=local
 
-# Parameters for S3 when s3 is selected as store for oml_callrec_device
-# s3_access_key | NULL
+# ********** # Parameters for S3 when s3 is selected as store for oml_callrec_device
+# ********** # s3_access_key or NULL
 #export s3_access_key=
-# s3_access_secret_key | NULL
+# ********** # s3_access_secret_key | NULL
 #export s3_secret_key=
-# se bucket name | NULL
+# ********** # se bucket name | NULL
 #export s3_bucket_name=
-# s3 endpoint url Only when use non AWS S3 object | NULL
+# ********** # s3 endpoint url Only when use non AWS S3 object | NULL
 #export s3_enpoint_url=NULL
-# s3 bucket region | NULL
+# ********** # s3 bucket region | NULL
 #export s3_region=NULL
 
-# Parameters for NFS when nfs is selected as store for oml_callrec_device
-# NFS netaddr | NULL
+# ********** # Parameters for NFS when nfs is selected as store for oml_callrec_device
+# ********** # NFS netaddr | NULL
 #export nfs_host=
 
 # ******* persistent data STORE block devices *******
 
-# Values: /dev/disk/by-label/optoml-${oml_tenant_name}
+# ********** # Values: /dev/disk/by-label/optoml-${oml_tenant_name}
 #export optoml_device=NULL
-# Values: /dev/disk/by-label/pgsql-${oml_tenant_name}
+# ********** # Values: /dev/disk/by-label/pgsql-${oml_tenant_name}
 #export pgsql_device=NULL
 
-# Set your network interface
+# ********** # Set your network interface
 #export oml_nic=eth0
 
-# ******* Variables for ACD Asterisk *******
-# AMI connection from OMLApp
+# ********** # ******* Variables for ACD Asterisk *******
+# ********** # AMI connection from OMLApp
 #export oml_ami_user=omnileadsami
 #export oml_ami_password=098098ZZZ
-# Values: NULL | IP address or FQDN
+# ********** # Values: NULL | IP address or FQDN
 #export oml_acd_host=NULL
 
-# ******* Variables for PGSQL *******
-# POSTGRESQL network address and port
-# Values: NULL | IP address or FQDN
+# ********** # ******* Variables for PGSQL *******
+# ********** # POSTGRESQL network address and port
+# ********** # Values: NULL | IP address or FQDN
 #export oml_pgsql_host=NULL
 #export oml_pgsql_port=5432
-# POSTGRESQL user, password and DB parameters
+# ********** # POSTGRESQL user, password and DB parameters
 #export oml_pgsql_db=omnileads
 #export oml_pgsql_user=omnileads
 #export oml_pgsql_password=098098ZZZ
-# If PGSQL runs on cloud cluster, set this parameter to true
+# ********** # If PGSQL runs on cloud cluster, set this parameter to true
 #export oml_pgsql_cloud=NULL
 
-# ******* Variables for Dialer *******
+# ********** ## ******* Variables for Dialer *******
 #export api_dialer_user=demoadmin
 #export api_dialer_password=demo
-# Values: NULL | IP address or FQDN
+# ********** # Values: NULL | IP address or FQDN
 #export oml_dialer_host=NULL
 
-# ******* Variables for WebRTC bridge *******
-# Values: NULL | IP address or FQDN
+# ********** # ******* Variables for WebRTC bridge *******
+# ********** # Values: NULL | IP address or FQDN
 #export oml_rtpengine_host=NULL
-# Values: NULL | IP address or FQDN
+# ********** # Values: NULL | IP address or FQDN
 #export oml_kamailio_host=NULL
 
-# ******* Variables for Redis and Websocket *******
-# Values: NULL | IP address or FQDN
+# ********** # ******* Variables for Redis and Websocket *******
+# ********** # Values: NULL | IP address or FQDN
 #export oml_redis_host=NULL
 
-# Values: True or NULL
+# ********** # Values: True or NULL
 #export oml_redis_ha=NULL
 #export oml_sentinel_host_01=NULL
 #export oml_sentinel_host_02=NULL
 #export oml_sentinel_host_03=NULL
 
-# Values: NULL | IP address or FQDN
+# ********** # Values: NULL | IP address or FQDN
 #export oml_websocket_host=NULL
 #export oml_websocket_port=NULL
 
@@ -110,28 +109,27 @@
 # ***************************************************************************************************************************************
 #export oml_extern_ip=none
 
-# ******* Vaiables for OMLApp web *******
+# ********** # ******* Vaiables for OMLApp web *******
 #export oml_tz=America/Argentina/Cordoba
-# Session Cookie Age (SCA): It's the time in seconds that will last the https session when inactivity
-# is detected in the session (by default is 1 hour)
+# ********** # Session Cookie Age (SCA): It's the time in seconds that will last the https session when inactivity
+# ********** # is detected in the session (by default is 1 hour)
 #export oml_app_sca=3600
-# Ephemeral Credentials TTL (ECTTL): It's the time in seconds that will last the SIP credentials
-# used to authenticate a SIP user in the telephony system (by default 8 hours)
+# ********** # Ephemeral Credentials TTL (ECTTL): It's the time in seconds that will last the SIP credentials
+# ********** # used to authenticate a SIP user in the telephony system (by default 8 hours)
 #export oml_app_ecctl=28800
-# Login failure limit (LFM): It's the number of attempts a user has to enter an incorrect password in login
-# Decrease it if paranoic reasons
+# ********** # Login failure limit (LFM): It's the number of attempts a user has to enter an incorrect password in login
+# ********** # Decrease it if paranoic reasons
 #export oml_app_login_fail_limit=10
 
-# Values: true | false
-#export oml_app_init_env=true
+# ********** # Values: true | false
 #export oml_app_reset_admin_pass=true
 #export oml_app_install_sngrep=true
 
-# Above 200 users enable this
-# Values: true | NULL
+# ********** # Above 200 users enable this
+# ********** # Values: true | NULL
 #export oml_high_load=NULL
 
-# Google maps API
+# ********** # Google maps API
 #export oml_google_maps_api_key=NULL
 #export oml_google_maps_center='{ "lat": -31.416668, "lng": -64.183334 }'
 
@@ -264,9 +262,6 @@ echo "******************** inventory setting ********************"
 
 sed -i "s/#localhost ansible/localhost ansible/g" $PATH_DEPLOY/inventory
 
-# sed -i "s/oml_lan_ip=/oml_lan_ip=$PRIVATE_IPV4/g" $PATH_DEPLOY/inventory
-# sed -i "s/oml_wan_ip=/oml_wan_ip=$PUBLIC_IPV4/g" $PATH_DEPLOY/inventory
-
 # PGSQL edit inventory params **************************************************
 
 if [[ "${oml_pgsql_cloud}"  == "true" ]];then
@@ -367,9 +362,6 @@ fi
 if [[ "${oml_callrec_device}" != "NULL" ]];then
 sed -i "s/callrec_device=local/callrec_device=${oml_callrec_device}/g" $PATH_DEPLOY/inventory
 fi
-if [[ "${oml_backup_filename}" != "NULL" ]];then
-sed -i "s%\#backup_file_name=%backup_file_name=${oml_backup_filename}%g" $PATH_DEPLOY/inventory
-fi
 if [[ "${s3_access_key}" != "NULL" ]];then
 sed -i "s%\#s3_access_key=%s3_access_key=${s3_access_key}%g" $PATH_DEPLOY/inventory
 fi
@@ -384,9 +376,6 @@ sed -i "s%\#s3url=%s3url=${s3_endpoint_url}%g" $PATH_DEPLOY/inventory
 fi
 if [[ "${s3_region}" != "NULL" ]];then
 sed -i "s%\#s3_region=%s3_region=${s3_region}%g" $PATH_DEPLOY/inventory
-fi
-if [[ "${oml_auto_restore}" != "NULL" ]];then
-sed -i "s/auto_restore=false/auto_restore=${oml_auto_restore}/g" $PATH_DEPLOY/inventory
 fi
 if [[ "${oml_high_load}" != "NULL" ]];then
 sed -i "s/high_load=false/high_load=${oml_high_load}/g" $PATH_DEPLOY/inventory

@@ -4,6 +4,8 @@ services:
     container_name: omlacd
     depends_on:
       - postgresql
+      - redis
+      - haproxy
     dns: 8.8.8.8
     env_file:
       - .env

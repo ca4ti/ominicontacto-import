@@ -9,7 +9,7 @@ services:
     dns: 8.8.8.8
     env_file:
       - .env
-    image: freetechsolutions/omlacd:${OMLACD_VERSION}
+    image: freetechsolutions/omlacd:${OMLACD_TAG}
     networks:
       - devenv
     ports:
@@ -30,7 +30,7 @@ services:
     dns: 8.8.8.8
     env_file:
       - .env
-    image: freetechsolutions/omlacd:${OMLACD_VERSION}
+    image: freetechsolutions/omlacd:${OMLACD_TAG}
     networks:
       - devenv
     ports:
@@ -47,7 +47,7 @@ services:
   app-builder:
     container_name: omlappbuilder
     dns: 8.8.8.8
-    image: freetechsolutions/omlapp-builder:develop
+    image: freetechsolutions/omlapp-builder:${OMLAPPBUILDER_TAG}
     networks:
       - devenv
     privileged: true
@@ -69,7 +69,7 @@ services:
     dns: 8.8.8.8
     env_file:
       - .env
-    image: freetechsolutions/omlapp:${OMLAPP_VERSION}
+    image: freetechsolutions/omlapp:${OMLAPP_TAG}
     networks:
       - devenv
     privileged: true
@@ -120,7 +120,7 @@ services:
       - SHM_SIZE=${SHM_SIZE}
       - PKG_SIZE=${PKG_SIZE}
       - KAMAILIO_CERTS_LOCATION=${KAMAILIO_CERTS_LOCATION}
-    image: freetechsolutions/omlkam:latest
+    image: freetechsolutions/omlkam:${OMLKAM_TAG}
     networks:
       - devenv
     privileged: true
@@ -129,34 +129,34 @@ services:
     volumes:
       - ../../../../omlkamailio/source/conf:/etc/kamailio/
 
-  siproxy:
-    command:
-      - /bin/bash
-    container_name: omlsipproxy
-    depends_on:
-      - redis
-      - acd
-    dns: 8.8.8.8
-    environment:
-      - ASTERISK_HOSTNAME=${ASTERISK_HOSTNAME}
-      - ASTERISK01_HOSTNAME=${ASTERISK_HOSTNAME}
-      - KAMAILIOPSTN_HOSTNAME=${KAMAILIOPSTN_HOSTNAME}
-      - REDIS_HOSTNAME=${REDIS_HOSTNAME}
-      - RTPENGINE_HOSTNAME=${RTPENGINE_HOSTNAME}
-      - TZ=${TZ}
-      - SHM_SIZE=${SHM_SIZE}
-      - PKG_SIZE=${PKG_SIZE}
-      - KAMAILIO_CERTS_LOCATION=${KAMAILIO_CERTS_LOCATION}
-    image: freetechsolutions/omlkam:latest
-    networks:
-      - devenv
-    ports:
-      - 5060:5060/udp      
-    privileged: true
-    restart: on-failure
-    stop_grace_period: 1m30s
-    volumes:
-      - ../../../../omlsipproxy/source/conf:/etc/kamailio/
+  # siproxy:
+  #   command:
+  #     - /bin/bash
+  #   container_name: omlsipproxy
+  #   depends_on:
+  #     - redis
+  #     - acd
+  #   dns: 8.8.8.8
+  #   environment:
+  #     - ASTERISK_HOSTNAME=${ASTERISK_HOSTNAME}
+  #     - ASTERISK01_HOSTNAME=${ASTERISK_HOSTNAME}
+  #     - KAMAILIOPSTN_HOSTNAME=${KAMAILIOPSTN_HOSTNAME}
+  #     - REDIS_HOSTNAME=${REDIS_HOSTNAME}
+  #     - RTPENGINE_HOSTNAME=${RTPENGINE_HOSTNAME}
+  #     - TZ=${TZ}
+  #     - SHM_SIZE=${SHM_SIZE}
+  #     - PKG_SIZE=${PKG_SIZE}
+  #     - KAMAILIO_CERTS_LOCATION=${KAMAILIO_CERTS_LOCATION}
+  #   image: freetechsolutions/omlkam:{OMLKAM_TAG}
+  #   networks:
+  #     - devenv
+  #   ports:
+  #     - 5060:5060/udp      
+  #   privileged: true
+  #   restart: on-failure
+  #   stop_grace_period: 1m30s
+  #   volumes:
+  #     - ../../../../omlsipproxy/source/conf:/etc/kamailio/
 
   mariadb:
     container_name: omlmariadb
@@ -188,7 +188,7 @@ services:
       - TZ=${TZ}
       - ENV=devenv
       - INFRA=docker
-    image: freetechsolutions/omlnginx:latest
+    image: freetechsolutions/omlnginx:${OMLNGINX_TAG}
     networks:
       - devenv
     privileged: true
@@ -205,7 +205,7 @@ services:
       - POSTGRES_USER=${PGUSER}
       - POSTGRES_PASSWORD=${PGPASSWORD}
       - POSTGRES_DB=${PGDATABASE}
-    image: freetechsolutions/omlpgsql:develop
+    image: freetechsolutions/omlpgsql:${OMLPGSQL_TAG}
     networks:
       - devenv
     ports:
@@ -222,7 +222,7 @@ services:
     dns: 8.8.8.8
     environment:
       - TZ=${TZ}
-    image: freetechsolutions/omlpbxemulator:develop
+    image: freetechsolutions/omlpbxemulator:${OMLPSTNEMULATOR_TAG}
     networks:
       - devenv
     ports:
@@ -242,7 +242,7 @@ services:
       - redis_rep_02
       - app
     dns: 8.8.8.8
-    image: freetechsolutions/omlhaproxy:latest
+    image: freetechsolutions/omlhap:${OMLHAPROXY_TAG}
     networks:
       - devenv
     ports:
@@ -261,7 +261,7 @@ services:
       - ROLE=main
     networks:
       - devenv
-    image: freetechsolutions/omlredis:${REDISGEARS_VERSION}
+    image: freetechsolutions/omlredis:${OMLREDIS_TAG}
     privileged: true
     restart: on-failure
     stop_grace_period: 1m30s
@@ -278,7 +278,7 @@ services:
       - ROLE=replica
     networks:
       - devenv
-    image: freetechsolutions/omlredis:${REDISGEARS_VERSION}
+    image: freetechsolutions/omlredis:${OMLREDIS_TAG}
     privileged: true
     restart: on-failure
     stop_grace_period: 1m30s  
@@ -296,7 +296,7 @@ services:
       - ROLE=replica
     networks:
       - devenv
-    image: freetechsolutions/omlredis:${REDISGEARS_VERSION}
+    image: freetechsolutions/omlredis:${OMLREDIS_TAG}
     privileged: true
     restart: on-failure
     stop_grace_period: 1m30s
@@ -317,7 +317,7 @@ services:
       - SENTINEL_FAILOVER=6000      
     networks:
       - devenv
-    image: freetechsolutions/omlsentinel:${REDISGEARS_VERSION}
+    image: freetechsolutions/omlsentinel:${OMLSENTINEL_TAG}
     privileged: true
     restart: on-failure
     stop_grace_period: 1m30s
@@ -336,7 +336,7 @@ services:
       - SENTINEL_FAILOVER=6000      
     networks:
       - devenv
-    image: freetechsolutions/omlsentinel:${REDISGEARS_VERSION}
+    image: freetechsolutions/omlsentinel:${OMLSENTINEL_TAG}
     privileged: true
     restart: on-failure
     stop_grace_period: 1m30s
@@ -355,7 +355,7 @@ services:
       - SENTINEL_FAILOVER=6000      
     networks:
       - devenv
-    image: freetechsolutions/omlsentinel:${REDISGEARS_VERSION}
+    image: freetechsolutions/omlsentinel:${OMLSENTINEL_TAG}
     privileged: true
     restart: on-failure
     stop_grace_period: 1m30s
@@ -380,7 +380,7 @@ services:
   websockets:
     tty: true
     container_name: omlwebsockets
-    image: freetechsolutions/oml-websockets:run
+    image: freetechsolutions/oml-websockets:${OMLWS_TAG}
     ports:
       - "${WEBSOCKET_EXT_PORT}:8000"
     networks:
@@ -391,7 +391,7 @@ services:
   vue-cli:
     tty: true
     container_name: omlvuejscli
-    image: freetechsolutions/vue-cli:develop
+    image: freetechsolutions/vue-cli:${OMLVUEJS_TAG}
     ports:
       - ${NODEJS_EXT_PORT}:8081
     networks:

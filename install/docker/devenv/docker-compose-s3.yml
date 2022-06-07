@@ -23,31 +23,31 @@ services:
       - ../../../../omlacd/source/scripts:/opt/omnileads/asterisk/virtualenv/scripts
     working_dir: /etc/asterisk
   
-  # acd_01:
-  #   container_name: omlacd01
-  #   depends_on:
-  #     - postgresql
-  #   dns: 8.8.8.8
-  #   env_file:
-  #     - .env
-  #   image: freetechsolutions/omlacd:${OMLACD_VERSION}
-  #   networks:
-  #     - devenv
-  #   ports:
-  #     - 5230-5233:5160-5163/udp
-  #   privileged: true
-  #   restart: on-failure
-  #   stop_grace_period: 1m30s
-  #   volumes:
-  #     - ../../../../omlacd/source/astconf:/etc/asterisk/
-  #     - ../../../../omlacd/source/agis:/var/lib/asterisk/agi-bin/
-  #     - ../../../../omlacd/source/scripts:/opt/omnileads/asterisk/virtualenv/scripts
-  #   working_dir: /etc/asterisk  
-
+  acd_01:
+    container_name: omlacd01
+    depends_on:
+      - postgresql
+    dns: 8.8.8.8
+    env_file:
+      - .env
+    image: freetechsolutions/omlacd:${OMLACD_VERSION}
+    networks:
+      - devenv
+    ports:
+      - 5230-5233:5160-5163/udp
+    privileged: true
+    restart: on-failure
+    stop_grace_period: 1m30s
+    volumes:
+      - ../../../../omlacd/source/astconf:/etc/asterisk/
+      - ../../../../omlacd/source/agis:/var/lib/asterisk/agi-bin/
+      - ../../../../omlacd/source/scripts:/opt/omnileads/asterisk/virtualenv/scripts
+    working_dir: /etc/asterisk  
+  
   app-builder:
     container_name: omlappbuilder
     dns: 8.8.8.8
-    image: freetechsolutions/omlapp-builder:latest
+    image: freetechsolutions/omlapp-builder:develop
     networks:
       - devenv
     privileged: true
@@ -129,34 +129,34 @@ services:
     volumes:
       - ../../../../omlkamailio/source/conf:/etc/kamailio/
 
-  # siproxy:
-  #   command:
-  #     - /bin/bash
-  #   container_name: omlsipproxy
-  #   depends_on:
-  #     - redis
-  #     - acd
-  #   dns: 8.8.8.8
-  #   environment:
-  #     - ASTERISK_HOSTNAME=${ASTERISK_HOSTNAME}
-  #     - ASTERISK01_HOSTNAME=${ASTERISK_HOSTNAME}
-  #     - KAMAILIOPSTN_HOSTNAME=${KAMAILIOPSTN_HOSTNAME}
-  #     - REDIS_HOSTNAME=${REDIS_HOSTNAME}
-  #     - RTPENGINE_HOSTNAME=${RTPENGINE_HOSTNAME}
-  #     - TZ=${TZ}
-  #     - SHM_SIZE=${SHM_SIZE}
-  #     - PKG_SIZE=${PKG_SIZE}
-  #     - KAMAILIO_CERTS_LOCATION=${KAMAILIO_CERTS_LOCATION}
-  #   image: freetechsolutions/omlkam:latest
-  #   networks:
-  #     - devenv
-  #   ports:
-  #     - 5060:5060/udp      
-  #   privileged: true
-  #   restart: on-failure
-  #   stop_grace_period: 1m30s
-  #   volumes:
-  #     - ../../../../omlsipproxy/source/conf:/etc/kamailio/
+  siproxy:
+    command:
+      - /bin/bash
+    container_name: omlsipproxy
+    depends_on:
+      - redis
+      - acd
+    dns: 8.8.8.8
+    environment:
+      - ASTERISK_HOSTNAME=${ASTERISK_HOSTNAME}
+      - ASTERISK01_HOSTNAME=${ASTERISK_HOSTNAME}
+      - KAMAILIOPSTN_HOSTNAME=${KAMAILIOPSTN_HOSTNAME}
+      - REDIS_HOSTNAME=${REDIS_HOSTNAME}
+      - RTPENGINE_HOSTNAME=${RTPENGINE_HOSTNAME}
+      - TZ=${TZ}
+      - SHM_SIZE=${SHM_SIZE}
+      - PKG_SIZE=${PKG_SIZE}
+      - KAMAILIO_CERTS_LOCATION=${KAMAILIO_CERTS_LOCATION}
+    image: freetechsolutions/omlkam:latest
+    networks:
+      - devenv
+    ports:
+      - 5060:5060/udp      
+    privileged: true
+    restart: on-failure
+    stop_grace_period: 1m30s
+    volumes:
+      - ../../../../omlsipproxy/source/conf:/etc/kamailio/
 
   mariadb:
     container_name: omlmariadb
@@ -242,7 +242,7 @@ services:
       - redis_rep_02
       - app
     dns: 8.8.8.8
-    image: freetechsolutions/omlhap:latest
+    image: freetechsolutions/omlhaproxy:latest
     networks:
       - devenv
     ports:

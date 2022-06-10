@@ -5,7 +5,6 @@ import store from '@/store';
 import router from '@/router';
 import App from './App.vue';
 import Helpers from '@/helpers';
-// import { formatTime } from '@/helpers/time_format_helper';
 
 // Primevue
 import PrimeVue from 'primevue/config';
@@ -35,6 +34,7 @@ import Dialog from 'primevue/dialog';
 import InputNumber from 'primevue/inputnumber';
 import Checkbox from 'primevue/checkbox';
 import Calendar from 'primevue/calendar';
+import Steps from 'primevue/steps';
 
 // Idiomas
 import { createI18n } from 'vue-i18n';
@@ -68,6 +68,7 @@ app.component('Dialog', Dialog);
 app.component('InputNumber', InputNumber);
 app.component('Checkbox', Checkbox);
 app.component('Calendar', Calendar);
+app.component('Steps', Steps);
 
 // Register Helpers
 app.provide('$helpers', Helpers);

@@ -47,7 +47,7 @@ import { mapActions, mapState } from 'vuex';
 import AddAgents from '@/components/campaigns/agents/AddAgents.vue';
 import AddGroupAgents from '@/components/campaigns/agents/AddGroupAgents.vue';
 import AgentsCampaignTable from '@/components/campaigns/agents/AgentsCampaignTable.vue';
-import AgentsCampaignService from '@/services/agentsCampaignService';
+import AgentsCampaignService from '@/services/agents_campaign_service';
 
 export default {
     name: 'AddAgentsToCampaign',

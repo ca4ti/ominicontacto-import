@@ -62,6 +62,8 @@ import logging as logging_
 import os
 import csv
 
+from notification_app.message import emsg
+
 from utiles_globales import obtener_paginas
 
 logger = logging_.getLogger(__name__)
@@ -208,6 +210,10 @@ class CustomUserWizard(SessionWizardView):
         else:
             self._save_supervisor(user, rol)
 
+        if user.email:
+            user._password = user_form.cleaned_data["password1"]
+            emsg.create("user.created", user=user, request=self.request).send()
+
         return HttpResponseRedirect(reverse('user_list', kwargs={"page": 1}))
 
 
@@ -292,6 +298,10 @@ class CustomerUserUpdateView(UpdateView):
                         messages.WARNING,
                         message,
                     )
+
+        if form.instance.email and form.cleaned_data["password1"]:
+            form.instance._password = form.cleaned_data["password1"]
+            emsg.create("user.password-updated", user=form.instance, request=self.request).send()
 
         messages.success(self.request,
                          _('El usuario fue actualizado correctamente'))

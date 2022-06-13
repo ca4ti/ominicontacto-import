@@ -28,8 +28,7 @@ from reportes_app.models import LlamadaLog
 from reportes_app.reportes.reporte_agentes import ReporteAgentes
 
 from ominicontacto_app.utiles import datetime_hora_maxima_dia, datetime_hora_minima_dia
-from ominicontacto_app.models import (CalificacionCliente, AgenteProfile, Campana, User,
-                                      Pausa)
+from ominicontacto_app.models import (CalificacionCliente, AgenteProfile, Campana, User)
 
 from ominicontacto_app.services.asterisk.redis_database import AbstractRedisChanelPublisher
 
@@ -107,17 +106,15 @@ class ReporteEstadisticasDiariaAgente(object):
             self.estadisticas[agente.pk]['pausas'] = []
 
     def _calcular_pausas(self, info_agente):
-        tipo_pausa = info_agente['tipo_de_pausa']
         self.estadisticas[info_agente['id']]['pausas'].append(
             {'nombre': info_agente['pausa'].nombre,
              'valor': info_agente['tiempo']})
 
-        if tipo_pausa == Pausa.CHOICE_RECREATIVA:
-            tiempo_datetime = datetime.datetime.strptime(info_agente['tiempo'], "%H:%M:%S")
-            tiempo_pausa = timedelta(
-                hours=tiempo_datetime.hour, minutes=tiempo_datetime.minute,
-                seconds=tiempo_datetime.second)
-            self.estadisticas[info_agente['id']]['tiempos'].pausa_recreativa += tiempo_pausa
+        tiempo_datetime = datetime.datetime.strptime(info_agente['tiempo'], "%H:%M:%S")
+        tiempo_pausa = timedelta(
+            hours=tiempo_datetime.hour, minutes=tiempo_datetime.minute,
+            seconds=tiempo_datetime.second)
+        self.estadisticas[info_agente['id']]['tiempos'].pausa_recreativa += tiempo_pausa
 
     def contabilizar_estadisticas_actividad(self):
         hoy_ahora = datetime.datetime.today()

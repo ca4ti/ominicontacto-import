@@ -138,4 +138,4 @@ class DashboardAgenteTests(OMLBaseTest):
         reporte = ReporteEstadisticasDiariaAgente()
         reporte_agente = reporte.estadisticas[self.agente_profile.pk]
         self.assertEqual(reporte_agente['tiempos'].pausa, timedelta(minutes=4))
-        self.assertEqual(reporte_agente['tiempos'].pausa_recreativa, timedelta(minutes=2))
+        self.assertEqual(reporte_agente['tiempos'].pausa_recreativa, timedelta(minutes=4))

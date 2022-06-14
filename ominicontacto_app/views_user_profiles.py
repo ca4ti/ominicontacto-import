@@ -105,6 +105,9 @@ class CustomUserWizard(SessionWizardView):
         elif self.steps.current == self.AGENTE:
             context['titulo'] = _('Nuevo Usuario: Perfil de Agente')
 
+        agente_rol = Group.objects.filter(name=User.AGENTE).first()
+        if agente_rol:
+            context['AGENTE_ROL_ID'] = agente_rol.pk
         return context
 
     def get_form_kwargs(self, step):

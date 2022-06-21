@@ -23,27 +23,6 @@ services:
       - ../../../../omlacd/source/scripts:/opt/omnileads/asterisk/virtualenv/scripts
     working_dir: /etc/asterisk
   
-  acd_01:
-    container_name: omlacd01
-    depends_on:
-      - postgresql
-    dns: 8.8.8.8
-    env_file:
-      - .env
-    image: freetechsolutions/omlacd:${OMLACD_TAG}
-    networks:
-      - devenv
-    ports:
-      - 5230-5233:5160-5163/udp
-    privileged: true
-    restart: on-failure
-    stop_grace_period: 1m30s
-    volumes:
-      - ../../../../omlacd/source/astconf:/etc/asterisk/
-      - ../../../../omlacd/source/agis:/var/lib/asterisk/agi-bin/
-      - ../../../../omlacd/source/scripts:/opt/omnileads/asterisk/virtualenv/scripts
-    working_dir: /etc/asterisk  
-  
   app-builder:
     container_name: omlappbuilder
     dns: 8.8.8.8
@@ -83,24 +62,46 @@ services:
       - ../../../:/opt/omnileads/ominicontacto/
     working_dir: /opt/omnileads/ominicontacto
 
-  wombat:
-    command: >
-      bash -c "sed -i '/JDBC_URL/c\JDBC_URL=jdbc:mariadb:\/\/${MYSQL_HOST}\/${WOMBAT_DB}?user=${WOMBAT_DB_USER}&password=${WOMBAT_DB_PASS}&autoReconnect=true' /usr/local/tomcat/webapps/wombat/WEB-INF/tpf.properties && catalina.sh run"
-    container_name: omldialer
+  app02:
+    container_name: omlapp_node_02
     depends_on:
-      - mariadb
+      - postgresql
+      - selenium
     dns: 8.8.8.8
-    environment:
-      - TZ=${TZ}
-      - MYSQL_PWD=${MYSQL_ROOT_PASS}
-    image: freetechsolutions/omldialer:21.06.2-7
+    env_file:
+      - .env
+    image: freetechsolutions/omlapp:${OMLAPP_TAG}
     networks:
       - devenv
-    ports:
-      - ${WD_EXT_PORT}:8080/tcp
     privileged: true
     restart: on-failure
+    stdin_open: true
     stop_grace_period: 1m30s
+    tty: true
+    volumes:
+      - requirements:/usr/local/lib/python3.7/
+      - pyst2:/src/pyst2/
+      - ../../../:/opt/omnileads/ominicontacto/
+    working_dir: /opt/omnileads/ominicontacto  
+
+  # wombat:
+  #   command: >
+  #     bash -c "sed -i '/JDBC_URL/c\JDBC_URL=jdbc:mariadb:\/\/${MYSQL_HOST}\/${WOMBAT_DB}?user=${WOMBAT_DB_USER}&password=${WOMBAT_DB_PASS}&autoReconnect=true' /usr/local/tomcat/webapps/wombat/WEB-INF/tpf.properties && catalina.sh run"
+  #   container_name: omldialer
+  #   depends_on:
+  #     - mariadb
+  #   dns: 8.8.8.8
+  #   environment:
+  #     - TZ=${TZ}
+  #     - MYSQL_PWD=${MYSQL_ROOT_PASS}
+  #   image: freetechsolutions/omldialer:21.06.2-7
+  #   networks:
+  #     - devenv
+  #   ports:
+  #     - ${WD_EXT_PORT}:8080/tcp
+  #   privileged: true
+  #   restart: on-failure
+  #   stop_grace_period: 1m30s
 
   kamailio:
     command:
@@ -158,24 +159,24 @@ services:
   #   volumes:
   #     - ../../../../omlsipproxy/source/conf:/etc/kamailio/
 
-  mariadb:
-    container_name: omlmariadb
-    dns: 8.8.8.8
-    environment:
-      - ALLOW_EMPTY_PASSWORD=yes
-      - TZ=${TZ}
-      - MARIADB_ROOT_PASSWORD=${MYSQL_ROOT_PASS}
-      - MARIADB_DATABASE=${WOMBAT_DB}
-      - MARIADB_USER=${WOMBAT_DB_USER}
-      - MARIADB_PASSWORD=${WOMBAT_DB_PASS}
-    image: bitnami/mariadb:latest
-    networks:
-      - devenv
-    privileged: true
-    restart: on-failure
-    stop_grace_period: 1m30s
-    volumes:
-      - mariadb_data:/bitnami
+  # mariadb:
+  #   container_name: omlmariadb
+  #   dns: 8.8.8.8
+  #   environment:
+  #     - ALLOW_EMPTY_PASSWORD=yes
+  #     - TZ=${TZ}
+  #     - MARIADB_ROOT_PASSWORD=${MYSQL_ROOT_PASS}
+  #     - MARIADB_DATABASE=${WOMBAT_DB}
+  #     - MARIADB_USER=${WOMBAT_DB_USER}
+  #     - MARIADB_PASSWORD=${WOMBAT_DB_PASS}
+  #   image: bitnami/mariadb:latest
+  #   networks:
+  #     - devenv
+  #   privileged: true
+  #   restart: on-failure
+  #   stop_grace_period: 1m30s
+  #   volumes:
+  #     - mariadb_data:/bitnami
 
   nginx:
     container_name: omlnginx
@@ -188,14 +189,36 @@ services:
       - TZ=${TZ}
       - ENV=devenv
       - INFRA=docker
+      - APP=app
+    image: freetechsolutions/omlnginx:${OMLNGINX_TAG}
+    networks:
+      - devenv       
+    privileged: true
+    restart: on-failure
+    stop_grace_period: 1m30s
+    # volumes:
+    #   - ../../../../omlnginx/source/conf:/etc/nginx/
+
+  nginx02:
+    container_name: omlnginx_node_02
+    depends_on:
+      - app02
+      - kamailio
+      - websockets
+    dns: 8.8.8.8
+    environment:
+      - TZ=${TZ}
+      - ENV=devenv
+      - INFRA=docker
+      - APP=app02
     image: freetechsolutions/omlnginx:${OMLNGINX_TAG}
     networks:
       - devenv
     privileged: true
     restart: on-failure
     stop_grace_period: 1m30s
-    volumes:
-      - ../../../../omlnginx/source/conf:/etc/nginx/
+    # volumes:
+    #   - ../../../../omlnginx/source/conf:/etc/nginx/
 
   postgresql:
     container_name: omlpostgresql
@@ -234,26 +257,45 @@ services:
     stop_grace_period: 1m30s
     tty: true
 
-  haproxy:
-    container_name: omlhaproxy
+  redis_lb:
+    container_name: omlhaproxy_redis
     depends_on:
       - redis
       - redis_rep_01
       - redis_rep_02
       - app
     dns: 8.8.8.8
-    image: freetechsolutions/omlhap:${OMLHAPROXY_TAG}
+    image: freetechsolutions/omlhap_redis:${OMLHAPROXY_TAG}
     environment:
       - TZ=${TZ}
     networks:
       - devenv
     ports:
-      - ${NGINX_EXT_PORT}:443/tcp  
+      - 16379:6379   
     privileged: true
     restart: on-failure
     stop_grace_period: 1m30s
-    volumes:
-      - ../../../../omlhaproxy/build/docker/config/haproxy.conf:/etc/haproxy/
+    # volumes:
+    #   - ../../../../omlhaproxy/build/docker/config:/usr/local/etc/haproxy/
+
+  app_lb:
+    container_name: omlhaproxy_app
+    depends_on:
+      - nginx
+      - nginx02
+    dns: 8.8.8.8
+    image: freetechsolutions/omlhap_app:${OMLHAPROXY_TAG}
+    environment:
+      - TZ=${TZ}
+    networks:
+      - devenv
+    ports:
+      - ${NGINX_EXT_PORT}:443     
+    privileged: true
+    restart: on-failure
+    stop_grace_period: 1m30s
+    # volumes:
+    #   - ../../../../omlhaproxy/build/docker/config:/usr/local/etc/haproxy/    
 
   redis:
     container_name: omlredis
@@ -306,58 +348,61 @@ services:
       - redis_data_02:/data
 
   sentinel_01:
+    image: 'bitnami/redis-sentinel:latest'
+    environment:
+      - REDIS_MASTER_HOST=redis
+      - REDIS_SENTINEL_QUORUM=3
+      - REDIS_SENTINEL_DOWN_AFTER_MILLISECONDS=30000
+      - REDIS_SENTINEL_RESOLVE_HOSTNAMES=yes
+      - REDIS_MASTER_SET=master
     container_name: omlsentinel_01
     depends_on:
       - redis
       - redis_rep_01
       - redis_rep_02
     dns: 8.8.8.8
-    environment:
-      - TZ=${TZ}
-      - SENTINEL_QUORUM=2
-      - SENTINEL_DOWN_AFTER=3000
-      - SENTINEL_FAILOVER=6000      
     networks:
       - devenv
-    image: freetechsolutions/omlsentinel:${OMLSENTINEL_TAG}
     privileged: true
     restart: on-failure
     stop_grace_period: 1m30s
 
   sentinel_02:
+    image: 'bitnami/redis-sentinel:latest'
+    environment:
+      - REDIS_MASTER_HOST=redis
+      - REDIS_SENTINEL_QUORUM=3
+      - REDIS_SENTINEL_DOWN_AFTER_MILLISECONDS=30000
+      - REDIS_SENTINEL_RESOLVE_HOSTNAMES=yes
+      - REDIS_MASTER_SET=master
     container_name: omlsentinel_02
     depends_on:
       - redis
       - redis_rep_01
       - redis_rep_02
     dns: 8.8.8.8
-    environment:
-      - TZ=${TZ}
-      - SENTINEL_QUORUM=2
-      - SENTINEL_DOWN_AFTER=3000
-      - SENTINEL_FAILOVER=6000      
     networks:
       - devenv
-    image: freetechsolutions/omlsentinel:${OMLSENTINEL_TAG}
     privileged: true
     restart: on-failure
     stop_grace_period: 1m30s
 
   sentinel_03:
+    image: 'bitnami/redis-sentinel:latest'
+    environment:
+      - REDIS_MASTER_HOST=redis
+      - REDIS_SENTINEL_QUORUM=3
+      - REDIS_SENTINEL_DOWN_AFTER_MILLISECONDS=30000
+      - REDIS_SENTINEL_RESOLVE_HOSTNAMES=yes
+      - REDIS_MASTER_SET=master
     container_name: omlsentinel_03
     depends_on:
       - redis
       - redis_rep_01
       - redis_rep_02
     dns: 8.8.8.8
-    environment:
-      - TZ=${TZ}
-      - SENTINEL_QUORUM=2
-      - SENTINEL_DOWN_AFTER=3000
-      - SENTINEL_FAILOVER=6000      
     networks:
       - devenv
-    image: freetechsolutions/omlsentinel:${OMLSENTINEL_TAG}
     privileged: true
     restart: on-failure
     stop_grace_period: 1m30s
@@ -374,21 +419,35 @@ services:
     restart: on-failure
     stop_grace_period: 1m30s
 
-  selenium:
-    image: selenium/standalone-chrome
-    ports:
-      - "4445:4444"
+  # selenium:
+  #   image: selenium/standalone-chrome
+  #   ports:
+  #     - "4445:4444"
 
   websockets:
     tty: true
     container_name: omlwebsockets
     image: freetechsolutions/oml-websockets:${OMLWS_TAG}
+    depends_on:
+      - sentinel_01
+      - sentinel_02
+      - sentinel_03
+    environment:
+      - BIND_ADDRESS=0.0.0.0:8000
+      - EVENT_LOOP=uvloop
+      - LOGGERS=DEBUG:fts.oml.services.websockets;INFO:websockets.server
+      - REDIS_HOST=redis+sentinel://master/sentinel_01,sentinel_02,sentinel_03
     ports:
       - "${WEBSOCKET_EXT_PORT}:8000"
     networks:
       - devenv
     volumes:
       - ../../../../omlwebsockets/source/:/opt/services/webapp/src/
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:64310/health-checks"]
+      interval: 30s
+      timeout: 20s
+      retries: 3
 
   vue-cli:
     tty: true

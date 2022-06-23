@@ -1,12 +1,25 @@
 export default {
-    externalSystems: [],
-    externalSystemDetail: {
+    forms: [],
+    formDetail: {
         nombre: '',
-        agentes: []
+        descripcion: '',
+        campos: [],
+        oculto: false
     },
-    newExternalSystem: {
+    newForm: {
+        id: null,
         nombre: '',
-        agentes: []
+        descripcion: '',
+        campos: []
     },
-    agentsExternalSystem: []
+    newFormField: {
+        id: null,
+        nombre_campo: '',
+        orden: null,
+        tipo: null,
+        values_select: null,
+        is_required: false
+    },
+    isFormToCreate: true,
+    optionListValues: []
 };

@@ -35,6 +35,8 @@ import InputNumber from 'primevue/inputnumber';
 import Checkbox from 'primevue/checkbox';
 import Calendar from 'primevue/calendar';
 import Steps from 'primevue/steps';
+import Toast from 'primevue/toast';
+import Textarea from 'primevue/textarea';
 
 // Idiomas
 import { createI18n } from 'vue-i18n';
@@ -69,6 +71,8 @@ app.component('InputNumber', InputNumber);
 app.component('Checkbox', Checkbox);
 app.component('Calendar', Calendar);
 app.component('Steps', Steps);
+app.component('Toast', Toast);
+app.component('Textarea', Textarea);
 
 // Register Helpers
 app.provide('$helpers', Helpers);

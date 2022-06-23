@@ -1,47 +1,41 @@
 <template>
   <div class="card">
-    <Toolbar class="p-mb-4">
+    <Toolbar class="mb-4">
       <template #start>
-        <h1>{{ $tc("globals.external_system", 2) }}</h1>
+        <h1>{{ $tc("globals.form", 2) }}</h1>
       </template>
       <template #end>
         <Button
           :label="$tc('globals.new')"
           icon="pi pi-plus"
           class="p-button-success"
-          @click="newExternalSystem"
+          @click="newForm"
         />
       </template>
     </Toolbar>
-    <ExternalSystemsTable :externalSystems="externalSystems" />
+    <FormsTable :forms="forms" />
   </div>
 </template>
 
 <script>
 import { mapActions, mapState } from 'vuex';
-import ExternalSystemsTable from '@/components/external_systems/ExternalSystemsTable';
+import FormsTable from '@/components/forms/FormsTable';
 
 export default {
-    data () {
-        return {
-            showModalDetail: false,
-            externalSystem: null
-        };
-    },
     components: {
-        ExternalSystemsTable
+        FormsTable
     },
     async created () {
-        await this.initExternalSystems();
+        await this.initForms();
     },
     methods: {
-        newExternalSystem () {
-            this.$router.push({ name: 'external_systems_new' });
+        newForm () {
+            this.$router.push({ name: 'forms_new_step1' });
         },
-        ...mapActions(['initExternalSystems'])
+        ...mapActions(['initForms'])
     },
     computed: {
-        ...mapState(['externalSystems'])
+        ...mapState(['forms'])
     }
 };
 </script>

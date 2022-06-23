@@ -1,13 +1,13 @@
-import urls from '../const/external_system_urls';
+import urls from '../const/form_urls';
 import { HTTP, BaseService } from './base_service';
 
-export default class ExternalSystemService extends BaseService {
+export default class FormService extends BaseService {
     async list () {
         try {
-            const resp = await fetch(urls.ExternalSystemsList, this.payload);
+            const resp = await fetch(urls.FormList, this.payload);
             return await resp.json();
         } catch (error) {
-            console.error('No se pudieron obtener los sistemas externos');
+            console.error('No se pudieron obtener los formularios');
             return [];
         }
     }
@@ -15,12 +15,12 @@ export default class ExternalSystemService extends BaseService {
     async detail (id) {
         try {
             const resp = await fetch(
-                urls.ExternalSystemsDetail(id),
+                urls.FormDetail(id),
                 this.payload
             );
             return await resp.json();
         } catch (error) {
-            console.error('No se pudo obtener el detalle del sistema externo');
+            console.error('No se pudo obtener el detalle del formulario');
             return [];
         }
     }
@@ -29,13 +29,13 @@ export default class ExternalSystemService extends BaseService {
         try {
             this.setPayload(HTTP.POST, JSON.stringify(data));
             const resp = await fetch(
-                urls.ExternalSystemsCreate,
+                urls.FormCreate,
                 this.payload
             );
             this.initPayload();
             return await resp.json();
         } catch (error) {
-            console.error('No se pudo crear el sistema externo');
+            console.error('No se pudo crear el formulario');
             console.error(error);
             return {};
         }
@@ -45,24 +45,61 @@ export default class ExternalSystemService extends BaseService {
         try {
             this.setPayload(HTTP.PUT, JSON.stringify(data));
             const resp = await fetch(
-                urls.ExternalSystemsUpdate(id),
+                urls.FormUpdate(id),
                 this.payload
             );
             this.initPayload();
             return await resp.json();
         } catch (error) {
-            console.error('No se pudo actualizar el sistema externo');
+            console.error('No se pudo actualizar el formulario');
             console.error(error);
             return {};
         }
     }
 
-    async getAgents () {
+    async delete (id) {
         try {
-            const resp = await fetch(urls.AgentsExternalSystemList, this.payload);
+            this.setPayload(HTTP.DELETE);
+            const resp = await fetch(
+                urls.FormDelete(id),
+                this.payload
+            );
+            this.initPayload();
             return await resp.json();
         } catch (error) {
-            console.error('Error al obtener agentes');
+            console.error('No se pudo eliminar el formulario');
+            console.error(error);
+            return {};
+        }
+    }
+
+    async show (id) {
+        try {
+            this.setPayload(HTTP.PUT);
+            const resp = await fetch(
+                urls.FormShow(id),
+                this.payload
+            );
+            this.initPayload();
+            return await resp.json();
+        } catch (error) {
+            console.error('No se pudo desocultar el formulario');
+            console.error(error);
+            return {};
+        }
+    }
+
+    async hide (id) {
+        try {
+            this.setPayload(HTTP.PUT);
+            const resp = await fetch(
+                urls.FormHide(id),
+                this.payload
+            );
+            this.initPayload();
+            return await resp.json();
+        } catch (error) {
+            console.error('No se pudo ocultar el formulario');
             console.error(error);
             return {};
         }

@@ -45,6 +45,7 @@ export default {
     external_site: 'Sitio externo | Sitios externos',
     call_disposition: 'Calificacion | Calificaciones',
     external_system: 'Sistema externo | Sistemas externos',
+    form: 'Formulario | Formularios',
     // -------------
     // -- Actions --
     // -------------
@@ -82,6 +83,9 @@ export default {
     type_of: 'Tipo de {type}',
     export_type: 'Exportar {type}',
     filter: 'Filtrar',
+    next: 'Siguiente',
+    up: 'Mover arriba',
+    down: 'Mover abajo',
     // ---------------------
     // --- Notifications ---
     // ---------------------

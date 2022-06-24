@@ -147,35 +147,6 @@ services:
     volumes:
       - ../../../../omlkamailio/source/conf:/etc/kamailio/
 
-  # siproxy:
-  #   command:
-  #     - /bin/bash
-  #   container_name: omlsipproxy
-  #   depends_on:
-  #     - redis
-  #     - acd
-  #   dns: 8.8.8.8
-  #   environment:
-  #     - ASTERISK_HOSTNAME=${ASTERISK_HOSTNAME}
-  #     - ASTERISK01_HOSTNAME=${ASTERISK_HOSTNAME}
-  #     - KAMAILIOPSTN_HOSTNAME=${KAMAILIOPSTN_HOSTNAME}
-  #     - REDIS_HOSTNAME=${REDIS_HOSTNAME}
-  #     - RTPENGINE_HOSTNAME=${RTPENGINE_HOSTNAME}
-  #     - TZ=${TZ}
-  #     - SHM_SIZE=${SHM_SIZE}
-  #     - PKG_SIZE=${PKG_SIZE}
-  #     - KAMAILIO_CERTS_LOCATION=${KAMAILIO_CERTS_LOCATION}
-  #   image: freetechsolutions/omlkam:{OMLKAM_TAG}
-  #   networks:
-  #     - devenv
-  #   ports:
-  #     - 5060:5060/udp      
-  #   privileged: true
-  #   restart: on-failure
-  #   stop_grace_period: 1m30s
-  #   volumes:
-  #     - ../../../../omlsipproxy/source/conf:/etc/kamailio/
-
   mariadb:
     container_name: omlmariadb
     dns: 8.8.8.8
@@ -436,11 +407,6 @@ services:
     restart: on-failure
     stop_grace_period: 1m30s
 
-  # selenium:
-  #   image: selenium/standalone-chrome
-  #   ports:
-  #     - "4445:4444"
-
   websockets:
     tty: true
     container_name: omlwebsockets
@@ -463,8 +429,8 @@ services:
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8000/health-checks"]
       interval: 30s
-      timeout: 20s
-      retries: 3
+      timeout: 10s
+      retries: 6
 
   vue-cli:
     tty: true
@@ -485,6 +451,7 @@ services:
     environment:
       - MINIO_ROOT_USER=${S3_HTTP_ADMIN_USER}
       - MINIO_ROOT_PASSWORD=${S3_HTTP_ADMIN_PASS}
+      - MINIO_SERVER_URL=${S3_ENDPOINT}
     networks:
       - devenv
     expose:
@@ -494,7 +461,7 @@ services:
       - 9001:9001/tcp      
     volumes:
       - minio_data:/data
-      - ../ci-images/certs_minio:/root/.minio/certs/
+    #  - ../ci-images/certs_minio:/root/.minio/certs/
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
       interval: 30s

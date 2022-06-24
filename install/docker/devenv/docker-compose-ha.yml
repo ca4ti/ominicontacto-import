@@ -7,13 +7,30 @@ services:
       - redis
       - haproxy
     dns: 8.8.8.8
-    env_file:
-      - .env
+    environment:
+        - ASTERISK_LOCATION=${ASTERISK_LOCATION}
+        - AMI_USER=${AMI_USER}
+        - AMI_PASSWORD=${AMI_PASSWORD}
+        - OMNILEADS_HOSTNAME=${OMNILEADS_HOSTNAME}
+        - REDIS_HOSTNAME=${REDIS_HOSTNAME}
+        - PGHOST=${PGHOST}
+        - PGPORT=${PGPORT}
+        - PGUSER=${PGUSER}
+        - PGDATABASE=${GDATABASE}
+        - PGPASSWORD=${PGPASSWORD}
+        - MONITORFORMAT=${MONITORFORMAT}
+        - CALLREC_DEVICE=${CALLREC_DEVICE}
+        - S3_STORAGE_ENABLED=${S3_STORAGE_ENABLED}
+        - S3_BUCKET_NAME=${S3_BUCKET_NAME}
+        - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+        - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+        - S3_ENDPOINT=${S3_ENDPOINT}
+        - AWS_DEFAULT_REGION=${AWS_DEFAULT_REGION}
     image: freetechsolutions/omlacd:${OMLACD_TAG}
     networks:
       - devenv
     ports:
-      - 5130-5133:5160-5163/udp
+      - 5060:5163/udp
     privileged: true
     restart: on-failure
     stop_grace_period: 1m30s
@@ -84,24 +101,24 @@ services:
       - ../../../:/opt/omnileads/ominicontacto/
     working_dir: /opt/omnileads/ominicontacto  
 
-  # wombat:
-  #   command: >
-  #     bash -c "sed -i '/JDBC_URL/c\JDBC_URL=jdbc:mariadb:\/\/${MYSQL_HOST}\/${WOMBAT_DB}?user=${WOMBAT_DB_USER}&password=${WOMBAT_DB_PASS}&autoReconnect=true' /usr/local/tomcat/webapps/wombat/WEB-INF/tpf.properties && catalina.sh run"
-  #   container_name: omldialer
-  #   depends_on:
-  #     - mariadb
-  #   dns: 8.8.8.8
-  #   environment:
-  #     - TZ=${TZ}
-  #     - MYSQL_PWD=${MYSQL_ROOT_PASS}
-  #   image: freetechsolutions/omldialer:21.06.2-7
-  #   networks:
-  #     - devenv
-  #   ports:
-  #     - ${WD_EXT_PORT}:8080/tcp
-  #   privileged: true
-  #   restart: on-failure
-  #   stop_grace_period: 1m30s
+  wombat:
+    command: >
+      bash -c "sed -i '/JDBC_URL/c\JDBC_URL=jdbc:mariadb:\/\/${MYSQL_HOST}\/${WOMBAT_DB}?user=${WOMBAT_DB_USER}&password=${WOMBAT_DB_PASS}&autoReconnect=true' /usr/local/tomcat/webapps/wombat/WEB-INF/tpf.properties && catalina.sh run"
+    container_name: omldialer
+    depends_on:
+      - mariadb
+    dns: 8.8.8.8
+    environment:
+      - TZ=${TZ}
+      - MYSQL_PWD=${MYSQL_ROOT_PASS}
+    image: freetechsolutions/omldialer:21.06.2-7
+    networks:
+      - devenv
+    ports:
+      - ${WD_EXT_PORT}:8080/tcp
+    privileged: true
+    restart: on-failure
+    stop_grace_period: 1m30s
 
   kamailio:
     command:
@@ -159,24 +176,24 @@ services:
   #   volumes:
   #     - ../../../../omlsipproxy/source/conf:/etc/kamailio/
 
-  # mariadb:
-  #   container_name: omlmariadb
-  #   dns: 8.8.8.8
-  #   environment:
-  #     - ALLOW_EMPTY_PASSWORD=yes
-  #     - TZ=${TZ}
-  #     - MARIADB_ROOT_PASSWORD=${MYSQL_ROOT_PASS}
-  #     - MARIADB_DATABASE=${WOMBAT_DB}
-  #     - MARIADB_USER=${WOMBAT_DB_USER}
-  #     - MARIADB_PASSWORD=${WOMBAT_DB_PASS}
-  #   image: bitnami/mariadb:latest
-  #   networks:
-  #     - devenv
-  #   privileged: true
-  #   restart: on-failure
-  #   stop_grace_period: 1m30s
-  #   volumes:
-  #     - mariadb_data:/bitnami
+  mariadb:
+    container_name: omlmariadb
+    dns: 8.8.8.8
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
+      - TZ=${TZ}
+      - MARIADB_ROOT_PASSWORD=${MYSQL_ROOT_PASS}
+      - MARIADB_DATABASE=${WOMBAT_DB}
+      - MARIADB_USER=${WOMBAT_DB_USER}
+      - MARIADB_PASSWORD=${WOMBAT_DB_PASS}
+    image: bitnami/mariadb:latest
+    networks:
+      - devenv
+    privileged: true
+    restart: on-failure
+    stop_grace_period: 1m30s
+    volumes:
+      - mariadb_data:/bitnami
 
   nginx:
     container_name: omlnginx
@@ -193,8 +210,6 @@ services:
     image: freetechsolutions/omlnginx:${OMLNGINX_TAG}
     networks:
       - devenv     
-    ports:
-      - 10443:443    
     privileged: true
     restart: on-failure
     stop_grace_period: 1m30s
@@ -277,8 +292,8 @@ services:
     privileged: true
     restart: on-failure
     stop_grace_period: 1m30s
-    # volumes:
-    #   - ../../../../omlhaproxy/build/docker/config:/usr/local/etc/haproxy/
+    volumes:
+     - ../../../../omlhaproxy/build/redis_lb:/usr/local/etc/haproxy/
 
   app_lb:
     container_name: omlhaproxy_app
@@ -296,8 +311,8 @@ services:
     privileged: true
     restart: on-failure
     stop_grace_period: 1m30s
-    # volumes:
-    #   - ../../../../omlhaproxy/build/docker/config:/usr/local/etc/haproxy/    
+    volumes:
+    - ../../../../omlhaproxy/build/nginx_lb:/usr/local/etc/haproxy/
 
   redis:
     container_name: omlredis
@@ -307,7 +322,7 @@ services:
       - ROLE=main
     networks:
       - devenv
-    image: freetechsolutions/omlredis:${OMLREDIS_TAG}
+    image: redislabs/redisgears:${REDISGEARS_VERSION}
     privileged: true
     restart: on-failure
     stop_grace_period: 1m30s
@@ -321,10 +336,10 @@ services:
     dns: 8.8.8.8
     environment:
       - TZ=${TZ}
-      - ROLE=replica
     networks:
       - devenv
-    image: freetechsolutions/omlredis:${OMLREDIS_TAG}
+    image: redislabs/redisgears:${REDISGEARS_VERSION}
+    command: redis-server --loadmodule /var/opt/redislabs/lib/modules/redisgears.so --slaveof redis 6379
     privileged: true
     restart: on-failure
     stop_grace_period: 1m30s  
@@ -339,10 +354,10 @@ services:
     dns: 8.8.8.8
     environment:
       - TZ=${TZ}
-      - ROLE=replica
     networks:
       - devenv
-    image: freetechsolutions/omlredis:${OMLREDIS_TAG}
+    image: redislabs/redisgears:${REDISGEARS_VERSION}
+    command: redis-server --loadmodule /var/opt/redislabs/lib/modules/redisgears.so --slaveof redis 6379
     privileged: true
     restart: on-failure
     stop_grace_period: 1m30s

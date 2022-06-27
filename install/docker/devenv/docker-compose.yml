@@ -24,9 +24,9 @@ services:
         - S3_BUCKET_NAME=${S3_BUCKET_NAME}
         - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
         - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
-        - S3_ENDPOINT=${S3_ENDPOINT}
+        - S3_ENDPOINT=${S3_ENDPOINT_MINIO}
         - AWS_DEFAULT_REGION=${AWS_DEFAULT_REGION}
-    image: freetechsolutions/omlacd:${OMLACD_TAG}
+    image: freetechsolutions/omnileads-acd:${OMLACD_TAG}
     networks:
       - devenv
     ports:
@@ -161,6 +161,7 @@ services:
       - ENV=devenv
       - INFRA=docker
       - APP=app
+      - S3_ENDPOINT=${S3_ENDPOINT_MINIO}
     image: freetechsolutions/omlnginx:${OMLNGINX_TAG}
     networks:
       - devenv
@@ -198,11 +199,11 @@ services:
     dns: 8.8.8.8
     environment:
       - TZ=${TZ}
-    image: freetechsolutions/omlpbxemulator:${OMLPSTNEMULATOR_TAG}
+    image: freetechsolutions/omlpstn:${OMLPSTNEMULATOR_TAG}
     networks:
       - devenv
     ports:
-      - 5061:5060/udp
+      - 6060:6060/udp
       - 10000-10020:10000-10020/udp
     privileged: true
     restart: on-failure
@@ -217,7 +218,7 @@ services:
       - TZ=${TZ}
     networks:
       - devenv
-    image: redislabs/redisgears:${REDISGEARS_VERSION}
+    image: redislabs/redisgears:${OMLREDISGEARS_TAG}
     privileged: true
     restart: on-failure
     stop_grace_period: 1m30s
@@ -257,7 +258,7 @@ services:
       test: ["CMD", "curl", "-f", "http://localhost:8000/health-checks"]
       interval: 30s
       timeout: 10s
-      retries: 6
+      retries: 10
  
   vue-cli:
     tty: true
@@ -275,21 +276,20 @@ services:
     tty: true
     container_name: omls3
     image: quay.io/minio/minio
-    command: server --console-address ":9001" /data
+    command: server --console-address "localhost:9001" /data
     environment:
       - MINIO_ROOT_USER=${S3_HTTP_ADMIN_USER}
       - MINIO_ROOT_PASSWORD=${S3_HTTP_ADMIN_PASS}
-      - MINIO_SERVER_URL=${S3_ENDPOINT}
+      - MINIO_SERVER_URL=https://localhost
+      - MINIO_BROWSER_REDIRECT_URL=https://localhost
     networks:
       - devenv
-    expose:
-      - "9000"
-      - "9001"
     ports:
-      - 9001:9001/tcp      
+      - 9001:9001   
+      - 9000:9000   
     volumes:
       - minio_data:/data
-    #  - ../ci-images/certs_minio:/root/.minio/certs/
+      #- ./minio_ssl:/root/.minio/certs/
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
       interval: 30s

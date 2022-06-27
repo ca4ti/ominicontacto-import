@@ -293,7 +293,7 @@ services:
       - ROLE=main
     networks:
       - devenv
-    image: redislabs/redisgears:${REDISGEARS_VERSION}
+    image: redislabs/redisgears:${OMLREDISGEARS_TAG}
     privileged: true
     restart: on-failure
     stop_grace_period: 1m30s
@@ -309,7 +309,7 @@ services:
       - TZ=${TZ}
     networks:
       - devenv
-    image: redislabs/redisgears:${REDISGEARS_VERSION}
+    image: redislabs/redisgears:${OMLREDISGEARS_TAG}
     command: redis-server --loadmodule /var/opt/redislabs/lib/modules/redisgears.so --slaveof redis 6379
     privileged: true
     restart: on-failure
@@ -327,7 +327,7 @@ services:
       - TZ=${TZ}
     networks:
       - devenv
-    image: redislabs/redisgears:${REDISGEARS_VERSION}
+    image: redislabs/redisgears:${OMLREDISGEARS_TAG}
     command: redis-server --loadmodule /var/opt/redislabs/lib/modules/redisgears.so --slaveof redis 6379
     privileged: true
     restart: on-failure

@@ -13,7 +13,7 @@
         />
       </template>
     </Toolbar>
-    <FormSteps :formDetail='formDetail' :formToEdit='true' :steps='steps' />
+    <FormSteps :formDetail="formDetail" :formToEdit="true" :steps="steps" />
   </div>
 </template>
 

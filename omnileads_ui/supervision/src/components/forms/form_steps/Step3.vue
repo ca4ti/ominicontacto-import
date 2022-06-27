@@ -1,14 +1,29 @@
 <template>
-<div class="card">
-    <h3>{{$t('views.step3.display_name')}} {{ newForm.nombre }}</h3>
-    <h3>{{$t('views.step3.display_description')}} {{ newForm.descripcion }}</h3>
+  <div class="card">
+    <h3>{{ $t("views.step3.display_name") }} {{ newForm.nombre }}</h3>
+    <h3>
+      {{ $t("views.step3.display_description") }} {{ newForm.descripcion }}
+    </h3>
     <div class="grid formgrid mt-4">
-      <div v-for="campo in newForm.campos.sort((a,b) =>  a.orden > b.orden ? 1 : -1 )" :key="campo.id" class="field col-6 mt-4">
-        <label>{{campo.nombre_campo }} {{ campo.is_required ? '*' : '' }}</label> <br>
-        <InputText class='w-full mt-2' v-if='campo.tipo == 1' type="text" />
-        <Calendar class='w-full mt-2' v-else-if='campo.tipo == 2' />
-        <Dropdown class='w-full mt-2' v-else-if='campo.tipo == 3' :options="JSON.parse(campo.values_select)" />
-        <Textarea class='w-full mt-2' v-else rows="5" cols="30" />
+      <div
+        v-for="campo in newForm.campos.sort((a, b) =>
+          a.orden > b.orden ? 1 : -1
+        )"
+        :key="campo.id"
+        class="field col-6 mt-4"
+      >
+        <label
+          >{{ campo.nombre_campo }} {{ campo.is_required ? "*" : "" }}</label
+        >
+        <br />
+        <InputText class="w-full mt-2" v-if="campo.tipo == 1" type="text" />
+        <Calendar class="w-full mt-2" v-else-if="campo.tipo == 2" />
+        <Dropdown
+          class="w-full mt-2"
+          v-else-if="campo.tipo == 3"
+          :options="JSON.parse(campo.values_select)"
+        />
+        <Textarea class="w-full mt-2" v-else rows="5" cols="30" />
       </div>
     </div>
     <div class="flex justify-content-between flex-wrap mb-4">
@@ -22,11 +37,7 @@
         />
       </div>
       <div class="flex align-items-center justify-content-center">
-        <Button
-          :label="$t('globals.save')"
-          icon="pi pi-save"
-          @click="save"
-        />
+        <Button :label="$t('globals.save')" icon="pi pi-save" @click="save" />
       </div>
     </div>
   </div>
@@ -56,17 +67,21 @@ export default {
                 this.formErrors.push(this.$t('forms.form.validations.required_name'));
             }
             if (this.newForm.descripcion === '') {
-                this.formErrors.push(this.$t('forms.form.validations.required_description'));
+                this.formErrors.push(
+                    this.$t('forms.form.validations.required_description')
+                );
             }
             if (this.newForm.campos.length === 0) {
-                this.formErrors.push(this.$t('forms.form.validations.not_empty_form_field'));
+                this.formErrors.push(
+                    this.$t('forms.form.validations.not_empty_form_field')
+                );
             }
         },
         async save () {
             this.validateFormData();
             if (this.formErrors.length > 0) {
                 var errors = '<ul>';
-                this.formErrors.forEach(e => {
+                this.formErrors.forEach((e) => {
                     errors += `<li>${e}<li/>`;
                 });
                 errors += '<ul/>';

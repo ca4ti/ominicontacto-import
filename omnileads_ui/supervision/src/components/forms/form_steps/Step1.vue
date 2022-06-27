@@ -49,7 +49,8 @@
             <i class="pi pi-align-left"></i>
           </span>
           <Textarea
-            rows="10" cols="30"
+            rows="10"
+            cols="30"
             id="form_descripcion"
             :class="{
               'p-invalid': v$.newForm.descripcion.$invalid && submitted,

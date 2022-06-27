@@ -1,7 +1,13 @@
 <template>
   <div class="card">
-    <h3>{{ $t('views.form.step2.title') }}</h3>
-    <FormFieldsTable :fields='newForm.campos.sort((a,b) =>  a.orden > b.orden ? 1 : -1 )' @upEvent='up' @downEvent='down' @handleModalEvent="handleModal" @removeFormFieldEvent='removeFormField' />
+    <h3>{{ $t("views.form.step2.title") }}</h3>
+    <FormFieldsTable
+      :fields="newForm.campos.sort((a, b) => (a.orden > b.orden ? 1 : -1))"
+      @upEvent="up"
+      @downEvent="down"
+      @handleModalEvent="handleModal"
+      @removeFormFieldEvent="removeFormField"
+    />
     <ModalFormField
       :showModal="showModal"
       @handleModalEvent="handleModal"
@@ -77,8 +83,12 @@ export default {
         up (field) {
             const orden = field.orden;
             if (orden > 1) {
-                var beforeField = this.newForm.campos.find(campo => campo.orden === orden - 1);
-                var currentField = this.newForm.campos.find(campo => campo.orden === orden);
+                var beforeField = this.newForm.campos.find(
+                    (campo) => campo.orden === orden - 1
+                );
+                var currentField = this.newForm.campos.find(
+                    (campo) => campo.orden === orden
+                );
                 beforeField.orden = orden;
                 currentField.orden = orden - 1;
             }
@@ -86,8 +96,12 @@ export default {
         down (field) {
             const orden = field.orden;
             if (this.newForm.campos.length > orden) {
-                var currentField = this.newForm.campos.find(campo => campo.orden === orden);
-                var afterField = this.newForm.campos.find(campo => campo.orden === orden + 1);
+                var currentField = this.newForm.campos.find(
+                    (campo) => campo.orden === orden
+                );
+                var afterField = this.newForm.campos.find(
+                    (campo) => campo.orden === orden + 1
+                );
                 afterField.orden = orden;
                 currentField.orden = orden + 1;
             }

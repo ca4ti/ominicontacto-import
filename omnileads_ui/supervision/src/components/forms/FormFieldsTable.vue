@@ -25,7 +25,7 @@
     >
       <template #header>
         <div class="flex justify-content-between flex-wrap">
-          <div class='flex align-items-center justify-content-center'>
+          <div class="flex align-items-center justify-content-center">
             <Button
               type="button"
               icon="pi pi-filter-slash"
@@ -34,7 +34,7 @@
               @click="clearFilter()"
             />
           </div>
-          <div class='flex align-items-center justify-content-center'>
+          <div class="flex align-items-center justify-content-center">
             <span class="p-input-icon-left">
               <i class="pi pi-search" />
               <InputText
@@ -57,10 +57,7 @@
       </template>
       <template #empty> {{ $t("globals.without_data") }} </template>
       <template #loading> {{ $t("globals.load_info") }} </template>
-      <Column
-        field="orden"
-        :header="$t('models.form_field.order')"
-      ></Column>
+      <Column field="orden" :header="$t('models.form_field.order')"></Column>
       <Column
         field="nombre_campo"
         :sortable="true"
@@ -95,7 +92,11 @@
         :header="$t('models.form_field.list_options')"
       >
         <template #body="slotProps">
-          {{ slotProps.data.values_select ? slotProps.data.values_select : '------' }}
+          {{
+            slotProps.data.values_select
+              ? slotProps.data.values_select
+              : "------"
+          }}
         </template>
       </Column>
       <Column
@@ -111,14 +112,14 @@
             v-tooltip.top="$t('globals.delete')"
           />
           <Button
-            v-if='slotProps.data.orden > 1'
+            v-if="slotProps.data.orden > 1"
             icon="pi pi-angle-up"
             class="p-button-info ml-2"
             @click="up(slotProps.data)"
             v-tooltip.top="$t('globals.up')"
           />
           <Button
-            v-if='fields.length > slotProps.data.orden'
+            v-if="fields.length > slotProps.data.orden"
             icon="pi pi-angle-down"
             class="p-button-secondary ml-2"
             @click="down(slotProps.data)"

@@ -13,7 +13,7 @@
         />
       </template>
     </Toolbar>
-    <FormSteps :steps='steps'/>
+    <FormSteps :steps="steps" />
   </div>
 </template>
 

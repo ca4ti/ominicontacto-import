@@ -1,12 +1,12 @@
 <template>
-<Dialog
+  <Dialog
     :visible="showModal"
     :style="{ width: '60vw' }"
     :closable="false"
     :modal="true"
   >
     <template #header>
-      <h2>{{ $t('forms.form.new_field') }}</h2>
+      <h2>{{ $t("forms.form.new_field") }}</h2>
     </template>
     <div class="card">
       <div class="fluid grid formgrid">
@@ -23,7 +23,7 @@
             :options="fieldTypes"
             optionLabel="option"
             optionValue="value"
-            @change='changeTypeEvent'
+            @change="changeTypeEvent"
             placeholder="--------"
             :emptyFilterMessage="$t('globals.without_data')"
             :filter="true"
@@ -48,18 +48,15 @@
               )
             }}</small
           >
-          <small
-            v-if="checkEmptyList"
-            class="p-error mt-2"
-            >{{ $t('forms.form.validations.not_empty_list') }}</small
-          >
+          <small v-if="checkEmptyList" class="p-error mt-2">{{
+            $t("forms.form.validations.not_empty_list")
+          }}</small>
         </div>
         <div class="field col-5">
           <label
             id="form_field_name"
             :class="{
-              'p-error':
-                v$.newFormField.nombre_campo.$invalid && submitted,
+              'p-error': v$.newFormField.nombre_campo.$invalid && submitted,
             }"
             >{{ $t("models.form_field.name") }}*</label
           >
@@ -69,12 +66,10 @@
             </span>
             <InputText
               id="form_field_name"
-              class='w-full'
-              @input='fieldNameEvent'
+              class="w-full"
+              @input="fieldNameEvent"
               :class="{
-                'p-invalid':
-                  v$.newFormField.nombre_campo.$invalid &&
-                  submitted,
+                'p-invalid': v$.newFormField.nombre_campo.$invalid && submitted,
               }"
               :placeholder="$t('forms.form.enter_name')"
               v-model="v$.newFormField.nombre_campo.$model"
@@ -82,8 +77,7 @@
           </div>
           <small
             v-if="
-              (v$.newFormField.nombre_campo.$invalid &&
-                submitted) ||
+              (v$.newFormField.nombre_campo.$invalid && submitted) ||
               v$.newFormField.nombre_campo.$pending.$response
             "
             class="p-error"
@@ -94,34 +88,36 @@
               )
             }}</small
           >
-          <small
-              v-if='duplicateFieldName'
-              class="p-error mt-2"
-              >{{ $t('forms.form.validations.field_already_in_form') }}</small>
+          <small v-if="duplicateFieldName" class="p-error mt-2">{{
+            $t("forms.form.validations.field_already_in_form")
+          }}</small>
         </div>
         <div class="field col-2">
-          <label
+          <label id="form_field_required">{{
+            $t("models.form_field.required")
+          }}</label>
+          <br />
+          <Checkbox
             id="form_field_required"
-            >{{ $t("models.form_field.required") }}</label> <br>
-          <Checkbox id="form_field_required" class='mt-2' v-model="newFormField.is_required" :binary="true" />
+            class="mt-2"
+            v-model="newFormField.is_required"
+            :binary="true"
+          />
         </div>
       </div>
-      <OptionListForm :isListType='isListType' />
+      <OptionListForm :isListType="isListType" />
     </div>
     <template #footer>
       <div class="flex justify-content-end flex-wrap">
-          <Button
-            class="p-button-danger p-button-outlined mr-2"
-            :label="$t('globals.cancel')"
-            @click="closeModal"
-          />
-          <Button
-          :label="$t('globals.save')"
-          @click="save(!v$.$invalid)"
-          />
+        <Button
+          class="p-button-danger p-button-outlined mr-2"
+          :label="$t('globals.cancel')"
+          @click="closeModal"
+        />
+        <Button :label="$t('globals.save')" @click="save(!v$.$invalid)" />
       </div>
     </template>
-</Dialog>
+  </Dialog>
 </template>
 
 <script>
@@ -188,7 +184,9 @@ export default {
                 if (this.optionListValues.length === 0) {
                     return null;
                 }
-                this.newFormField.values_select = JSON.stringify(this.optionListValues.map(data => data.nombre));
+                this.newFormField.values_select = JSON.stringify(
+                    this.optionListValues.map((data) => data.nombre)
+                );
             } else {
                 this.newFormField.values_select = null;
             }
@@ -205,7 +203,9 @@ export default {
             this.initOptionListValues();
         },
         fieldNameEvent () {
-            this.duplicateFieldName = this.newForm.campos.find(data => data.nombre_campo === this.newFormField.nombre_campo);
+            this.duplicateFieldName = this.newForm.campos.find(
+                (data) => data.nombre_campo === this.newFormField.nombre_campo
+            );
         }
     }
 };

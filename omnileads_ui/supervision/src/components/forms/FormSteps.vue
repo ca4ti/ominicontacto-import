@@ -1,12 +1,17 @@
 <template>
-    <div>
-        <div class="card">
-            <Steps :model="steps" />
-        </div>
-        <br> <br>
-        <router-view :formData="newForm" @prevPage="prevPage($event)" @nextPage="nextPage($event)">
-        </router-view>
+  <div>
+    <div class="card">
+      <Steps :model="steps" />
     </div>
+    <br />
+    <br />
+    <router-view
+      :formData="newForm"
+      @prevPage="prevPage($event)"
+      @nextPage="nextPage($event)"
+    >
+    </router-view>
+  </div>
 </template>
 
 <script>

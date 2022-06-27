@@ -25,7 +25,7 @@
     >
       <template #header>
         <div class="flex justify-content-between flex-wrap">
-          <div class='flex align-items-center justify-content-center'>
+          <div class="flex align-items-center justify-content-center">
             <Button
               type="button"
               icon="pi pi-filter-slash"
@@ -34,7 +34,7 @@
               @click="clearFilter()"
             />
           </div>
-          <div class='flex align-items-center justify-content-center'>
+          <div class="flex align-items-center justify-content-center">
             <Button
               v-if="!showAllInfo"
               type="button"
@@ -96,7 +96,7 @@
       >
         <template #body="slotProps">
           <Button
-            v-if='slotProps.data.se_puede_modificar'
+            v-if="slotProps.data.se_puede_modificar"
             icon="pi pi-pencil"
             class="p-button-warning ml-2"
             @click="edit(slotProps.data.id)"
@@ -109,7 +109,7 @@
             v-tooltip.top="$t('globals.show')"
           />
           <Button
-            v-if='slotProps.data.se_puede_modificar'
+            v-if="slotProps.data.se_puede_modificar"
             icon="pi pi-trash"
             class="p-button-danger ml-2"
             @click="remove(slotProps.data.id)"
@@ -175,9 +175,7 @@ export default {
             if (this.showAllInfo) {
                 this.formsFilter = this.forms;
             } else {
-                this.formsFilter = this.forms.filter(
-                    (es) => es.oculto === false
-                );
+                this.formsFilter = this.forms.filter((es) => es.oculto === false);
             }
         },
         detail (id) {
@@ -249,6 +247,8 @@ export default {
                 showCancelButton: true,
                 confirmButtonText: this.$t('globals.yes'),
                 cancelButtonText: this.$t('globals.no'),
+                confirmButtonColor: '#4CAF50',
+                cancelButtonColor: '#D32F2F',
                 backdrop: false,
                 reverseButtons: true
             }).then(async (result) => {

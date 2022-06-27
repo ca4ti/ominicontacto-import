@@ -53,7 +53,9 @@ from api_app.views.call_disposition import (
 from api_app.views.external_system import (
     AgentesSistemaExternoList, SistemaExternoCreate, SistemaExternoDetail,
     SistemaExternoList, SistemaExternoUpdate)
-from api_app.views.form import FormCreate, FormDelete, FormDetail, FormHide, FormList, FormShow, FormUpdate
+from api_app.views.form import (
+    FormCreate, FormDelete, FormDetail,
+    FormHide, FormList, FormShow, FormUpdate)
 from api_app.views.agente import (
     ObtenerCredencialesSIPAgenteView,
     OpcionesCalificacionViewSet, ApiCalificacionClienteView, ApiCalificacionClienteCreateView,

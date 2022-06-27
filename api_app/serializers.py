@@ -29,7 +29,8 @@ from ominicontacto_app.forms import FormularioNuevoContacto
 from ominicontacto_app.models import (
     AgenteEnContacto, AgenteEnSistemaExterno, AgenteProfile, ArchivoDeAudio,
     CalificacionCliente, Campana, ConfiguracionDePausa,
-    Contacto, FieldFormulario, Formulario, Grupo, ConjuntoDePausa, NombreCalificacion, OpcionCalificacion,
+    Contacto, FieldFormulario, Formulario, Grupo,
+    ConjuntoDePausa, NombreCalificacion, OpcionCalificacion,
     Pausa, SistemaExterno, SitioExterno, User, QueueMember)
 from easyaudit.models import CRUDEvent, LoginEvent, RequestEvent
 

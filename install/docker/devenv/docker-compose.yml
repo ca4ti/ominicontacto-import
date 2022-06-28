@@ -26,7 +26,7 @@ services:
         - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
         - S3_ENDPOINT=${S3_ENDPOINT_MINIO}
         - AWS_DEFAULT_REGION=${AWS_DEFAULT_REGION}
-    image: freetechsolutions/omnileads-acd:${OMLACD_TAG}
+    image: ${OMLACD_IMG}
     networks:
       - devenv
     ports:
@@ -35,7 +35,7 @@ services:
     restart: on-failure
     stop_grace_period: 1m30s
     volumes:
-      - ../../../../omlacd/grabaciones:/var/spool/asterisk/monitor/
+#      - ../../../../omlacd/grabaciones:/var/spool/asterisk/monitor/
       - ../../../../omlacd/source/astconf:/etc/asterisk/
       - ../../../../omlacd/source/agis:/var/lib/asterisk/agi-bin/
       - ../../../../omlacd/source/scripts:/opt/omnileads/asterisk/virtualenv/scripts
@@ -44,7 +44,7 @@ services:
   app-builder:
     container_name: omlappbuilder
     dns: 8.8.8.8
-    image: freetechsolutions/omlapp-builder:${OMLAPPBUILDER_TAG}
+    image: ${OMLAPPBUILDER_IMG}
     networks:
       - devenv
     privileged: true
@@ -67,7 +67,7 @@ services:
     dns: 8.8.8.8
     env_file: 
       - .env
-    image: freetechsolutions/omlapp:${OMLAPP_TAG}
+    image: ${OMLAPP_IMG}
     networks:
       - devenv
     privileged: true
@@ -93,7 +93,7 @@ services:
     environment:
       - TZ=${TZ}
       - MYSQL_PWD=${MYSQL_ROOT_PASS}
-    image: freetechsolutions/omldialer:21.06.2-7
+    image: ${WOMBAT_IMG}
     networks:
       - devenv
     ports:
@@ -121,7 +121,7 @@ services:
       - SHM_SIZE=${SHM_SIZE}
       - PKG_SIZE=${PKG_SIZE}
       - KAMAILIO_CERTS_LOCATION=${KAMAILIO_CERTS_LOCATION}
-    image: freetechsolutions/omlkam:${OMLKAM_TAG}
+    image: ${OMLKAM_IMG}
     networks:
       - devenv
     privileged: true
@@ -140,7 +140,7 @@ services:
       - MARIADB_DATABASE=${WOMBAT_DB}
       - MARIADB_USER=${WOMBAT_DB_USER}
       - MARIADB_PASSWORD=${WOMBAT_DB_PASS}
-    image: bitnami/mariadb:latest
+    image: ${MARIADB_IMG}
     networks:
       - devenv
     privileged: true
@@ -161,8 +161,7 @@ services:
       - ENV=devenv
       - INFRA=docker
       - APP=app
-      - S3_ENDPOINT=${S3_ENDPOINT_MINIO}
-    image: freetechsolutions/omlnginx:${OMLNGINX_TAG}
+    image: ${OMLNGINX_IMG}
     networks:
       - devenv
     privileged: true
@@ -172,7 +171,7 @@ services:
     stop_grace_period: 1m30s
     volumes:
       - ../../../../omlnginx/source/conf:/etc/nginx/
-      - ../../../../omlacd/grabaciones:/var/spool/asterisk/monitor
+#      - ../../../../omlacd/grabaciones:/var/spool/asterisk/monitor
 
   postgresql:
     container_name: omlpostgresql
@@ -182,7 +181,7 @@ services:
       - POSTGRES_USER=${PGUSER}
       - POSTGRES_PASSWORD=${PGPASSWORD}
       - POSTGRES_DB=${PGDATABASE}
-    image: freetechsolutions/omlpgsql:${OMLPGSQL_TAG}
+    image: ${OMLPGSQL_IMG}
     networks:
       - devenv
     ports:
@@ -199,7 +198,7 @@ services:
     dns: 8.8.8.8
     environment:
       - TZ=${TZ}
-    image: freetechsolutions/omlpstn:${OMLPSTNEMULATOR_TAG}
+    image: ${OMLPSTNEMULATOR_IMG}
     networks:
       - devenv
     ports:
@@ -218,7 +217,7 @@ services:
       - TZ=${TZ}
     networks:
       - devenv
-    image: redislabs/redisgears:${OMLREDISGEARS_TAG}
+    image: ${OMLREDISGEARS_IMG}
     privileged: true
     restart: on-failure
     stop_grace_period: 1m30s
@@ -230,7 +229,7 @@ services:
     dns: 8.8.8.8
     environment:
       - TZ=${TZ}
-    image: drachtio/rtpengine:latest
+    image: ${OMLRTPENGINE_IMG}
     networks:
       - devenv
     privileged: true
@@ -240,14 +239,14 @@ services:
   websockets:
     tty: true
     container_name: omlwebsockets
-    image: freetechsolutions/oml-websockets:${OMLWS_TAG}
+    image: ${OMLWS_IMG}
     depends_on:
       - redis
     environment:
       - BIND_ADDRESS=0.0.0.0:8000
       - EVENT_LOOP=uvloop
-      - LOGGERS=DEBUG:fts.oml.services.websockets,websockets.server
-      - REDIS_HOST=redis://redis:6379
+      - LOGGERS=${WEBSOCKET_LOGGER}
+      - REDIS_HOST=${WEBSOCKET_REDIS_HOSTNAME}
     ports:
       - "${WEBSOCKET_EXT_PORT}:8000"
     networks:
@@ -263,7 +262,7 @@ services:
   vue-cli:
     tty: true
     container_name: omlvuejscli
-    image: freetechsolutions/vue-cli:develop
+    image: ${OMLVUEJS_IMG}
     ports:
       - ${NODEJS_EXT_PORT}:8081
     networks:
@@ -275,7 +274,7 @@ services:
   minio:
     tty: true
     container_name: omls3
-    image: quay.io/minio/minio
+    image: ${OMLMINIO_IMG}
     command: server --console-address "localhost:9001" /data
     environment:
       - MINIO_ROOT_USER=${S3_HTTP_ADMIN_USER}
@@ -289,7 +288,6 @@ services:
       - 9000:9000   
     volumes:
       - minio_data:/data
-      #- ./minio_ssl:/root/.minio/certs/
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
       interval: 30s

@@ -184,8 +184,8 @@ services:
     privileged: true
     restart: on-failure
     stop_grace_period: 1m30s
-    # volumes:
-    #   - ../../../../omlnginx/source/conf:/etc/nginx/
+    volumes:
+      - ../../../../omlnginx/source/conf:/etc/nginx/
 
   nginx02:
     container_name: omlnginx_node_02
